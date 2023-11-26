@@ -65,7 +65,7 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   
-
+  <depend>robot_toolbox</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   sensor_msgs
+  robot_toolbox
 )
 
 ## System dependencies are found with CMake's conventions
@@ -129,6 +130,7 @@ catkin_package(
     std_msgs
     geometry_msgs
     sensor_msgs
+    robot_toolbox
   # DEPENDS 
   #   system_lib
 )
@@ -144,10 +146,16 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/info_msgs.cpp
-# )
+# Declare a C++ library
+add_library(${PROJECT_NAME}
+  src/info_handler.cpp
+)
+
+# Specify libraries to link a library or executable target against
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
