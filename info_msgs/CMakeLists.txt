@@ -149,6 +149,7 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/info_handler.cpp
+  src/info_kinematics_handler.cpp
 )
 
 # Specify libraries to link a library or executable target against
