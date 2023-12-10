@@ -94,10 +94,10 @@ namespace Info
             std::string solver_name;
             const std::string param_name = static_cast<std::string>(param_xml["solver_type"]);
 
-            // Get Type-Item data
+            // Get Type-Identifier data
             // (using the solver-type parameter information, find the related item (solver-name or solver-type) 
             // from the defined KinematicSolverTypeMap)
-            Toolbox::Parameter::getTypeItem(param_xml, param_name, kinematicSolverTypeMap, solver_type, solver_name);
+            Toolbox::Parameter::getTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap, solver_type, solver_name);
 
             // Parameter data assignment
             // -------------------------------
@@ -154,8 +154,8 @@ namespace Info
                 // (can be configured as either type [int] or name [std::string] on the parameter-server)
                 param_name = "solver_type";
 
-                // Check type-item parameter
-                if(!Toolbox::Parameter::checkTypeItem(param_xml, param_name, kinematicSolverTypeMap))
+                // Check type-identifier parameter
+                if(!Toolbox::Parameter::checkTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap))
                 {
                     // Parameter validation failed
                     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
