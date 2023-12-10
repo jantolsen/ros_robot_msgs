@@ -46,20 +46,6 @@
 // -------------------------------
 namespace Info
 {
-    // Constants
-    // -------------------------------
-        // Kinematic Solver Type Map
-        // (Matches the solver-types defined in InfoKinematics.msg)
-        static std::map<std::string, KinematicSolverType> const kinematicSolverTypeMap =
-        {
-            {"KDL", KinematicSolverType::KDL},
-            {"OPW", KinematicSolverType::OPW},
-            {"TRACIK", KinematicSolverType::TRACIK},
-            {"LMA", KinematicSolverType::LMA},
-            {"CACHED_KDL", KinematicSolverType::CACHED_KDL},
-            {"CACHED_TRACIK", KinematicSolverType::CACHED_TRACIK}
-        };
-
     // Enums
     // -------------------------------
         // Kinematic Solver Type 
@@ -73,6 +59,22 @@ namespace Info
             CACHED_KDL,
             CACHED_TRACIK
         };
+
+
+    // Constants
+    // -------------------------------
+        // Kinematic Solver Type Map
+        // (Matches the solver-types defined in InfoKinematics.msg)
+        static std::map<std::string, int> const kinematicSolverTypeMap =
+        {
+            {"KDL", KinematicSolverType::KDL},
+            {"OPW", KinematicSolverType::OPW},
+            {"TRACIK", KinematicSolverType::TRACIK},
+            {"LMA", KinematicSolverType::LMA},
+            {"CACHED_KDL", KinematicSolverType::CACHED_KDL},
+            {"CACHED_TRACIK", KinematicSolverType::CACHED_TRACIK}
+        };
+
 
     // Info-Kinematics-Handler Class
     // -------------------------------
@@ -152,7 +154,7 @@ namespace Info
             * \return Function result: Successful/Unsuccessful (true/false)
             */
             static bool validateParamInfoKinematics(
-                XmlRpc::XmlRpcValue& param_xml);
+                const XmlRpc::XmlRpcValue& param_xml);
 
 
         // Private Class members
