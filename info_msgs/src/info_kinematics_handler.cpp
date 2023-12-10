@@ -88,12 +88,15 @@ namespace Info
 
             // Get Solver-Type data
             // -------------------------------
+            // Solver-type can be configured by either the solver-name [string] or solver-type [int] on the parameter-server
             // Temporary variables
             int solver_type;
             std::string solver_name;
             const std::string param_name = static_cast<std::string>(param_xml["solver_type"]);
 
             // Get Type-Item data
+            // (using the solver-type parameter information, find the related item (solver-name or solver-type) 
+            // from the defined KinematicSolverTypeMap)
             Toolbox::Parameter::getTypeItem(param_xml, param_name, kinematicSolverTypeMap, solver_type, solver_name);
 
             // Parameter data assignment
