@@ -62,6 +62,17 @@ namespace Info
         } // Function End: init()
 
 
+        // Test Function
+        // -------------------------------
+        void InfoKinematicsHandler::test(
+            std::string param, 
+            info_msgs::InfoKinematics& info_kinematics)
+        {
+            // Load Parameter
+            loadParamInfoKinematics(param, info_kinematics);
+        } // Function End: init()
+
+
         // Load Information-Kinematics Parameter Data
         // -------------------------------
         // (Function Overloading)
@@ -92,7 +103,7 @@ namespace Info
             // Temporary variables
             int solver_type;
             std::string solver_name;
-            const std::string param_name = static_cast<std::string>(param_xml["solver_type"]);
+            std::string param_name = "solver_type";
 
             // Get Type-Identifier data
             // (using the solver-type parameter information, find the related item (solver-name or solver-type) 
@@ -105,7 +116,7 @@ namespace Info
             info_kinematics.solver_name = solver_name;
             info_kinematics.search_resolution = static_cast<double>(param_xml["search_resolution"]);
             info_kinematics.timeout = static_cast<double>(param_xml["timeout"]);
-            info_kinematics.attempts = static_cast<double>(param_xml["attempts"]);
+            info_kinematics.attempts = static_cast<int>(param_xml["attempts"]);
 
             // Function return
             return true;
@@ -124,6 +135,7 @@ namespace Info
             
             // Check parameter server for Information-Kinematics parameters
             if(!ros::param::get("/" + param_name, param_xml))
+            // if(!ros::param::get(param_name, param_xml))
             {
                 // Failed to get parameter
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 

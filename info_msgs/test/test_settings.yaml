@@ -1,0 +1,40 @@
+# System Settings
+# -------------------------------
+# Description:
+#   Setting/Parameter file for the general robot system
+#   (Some parameter needs to match the arguments set in the main launch file)
+#
+# Version:
+#   0.1 -   Initial version
+#           [18.11.2023] - Jan T. Olsen
+# -------------------------------
+
+# ----- General ----- #
+general:
+  simulation:           true            # Simulation mode [enable/disable]
+  global_frame:         world           # Global reference frame
+  kinematics:     
+    solver_type:        3             # Kinematic-solver [KDL, OPW, TRACIK, LMA, CACHED_KDL, CACHED_TRACIK]
+    search_resolution:  0.005
+    timeout:            0.005
+    attempts:           5
+
+# ----- Robot ----- #    
+robot:    
+  prefix:               robot_gp400     # Prefix-name of robot (gets added to joint-names, links, etc.) (needs to match parameter in main launch-file)
+  type:                 gp400           # Robot-type [GP400, GP215, IRB6660] (needs to match parameter in main launch-file)
+  # Planning-groups for the robot (needs to match parameter in SRDF of robot-type)
+  planning_group:   
+    robot:              manipulator     # Common robot planning-group   
+    robot_eoat:         eoat            # Robot with end-effector planning-group
+  # Robot-links in planning-scene (robot-Prefix is added to relevant link-name)   
+  planning_frames:         
+    ref_frame:          world           # Parent/reference-frame of which the robot/object is relative to
+    mount_frame:        base_link       # Mounting-frame of the robot/object
+    base_frame:         base_link       # Base-frame of the robot/object. Used for kinematic calculation 
+    tool_frame:         tool0           # Tool-frame of the robot/objec. Used for kinematic calculation 
+  # End-Effector parameters (selected eoat needs to included in the eoat-list of "eoat_settings.yaml") 
+  eoat:             
+    installed:          false           # Installed [enable/disable]
+    id:                 0               # ID
+    name:               ""              # name

@@ -21,4 +21,4 @@ string solver_name          # Solver-name [KDL, OPW, TRACIK, LMA, CACHED_KDL, CA
 int32 solver_type           # Solver-type [KDL [0], OPW [1], TRACIK [2], LMA [3], CACHED_KDL [4], CACHED_TRACIK [5]]
 float64 search_resolution   # Solver search-resolution
 float64 timeout             # Solver timeout [s]
-float64 attempts            # Solver attempts
+int32 attempts              # Solver attempts

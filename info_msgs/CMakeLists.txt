@@ -184,6 +184,14 @@ target_link_libraries(
 #   ${catkin_LIBRARIES}
 # )
 
+add_executable(test_info_kinematics 
+  test/test_info_kinematics.cpp)
+
+target_link_libraries(test_info_kinematics
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}
+)
+
 #############
 ## Install ##
 #############

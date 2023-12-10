@@ -105,6 +105,14 @@ namespace Info
             ~InfoKinematicsHandler();
 
 
+            // Test Function
+            // -------------------------------
+            /** \brief Test Function
+            */
+            void test(
+                std::string param, 
+                info_msgs::InfoKinematics& info_kinematics);
+
         // Protected Class members
         // -------------------------------
         // Accessible within the class which defines them, 
