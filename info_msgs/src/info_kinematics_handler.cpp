@@ -105,10 +105,10 @@ namespace Info
             std::string solver_name;
             std::string param_name = "solver_type";
 
-            // Get Type-Identifier data
-            // (using the solver-type parameter information, find the related item (solver-name or solver-type) 
-            // from the defined KinematicSolverTypeMap)
-            Toolbox::Parameter::getTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap, solver_type, solver_name);
+            // // Get Type-Identifier data
+            // // (using the solver-type parameter information, find the related item (solver-name or solver-type) 
+            // // from the defined KinematicSolverTypeMap)
+            // Toolbox::Parameter::getTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap, solver_type, solver_name);
 
             // Parameter data assignment
             // -------------------------------
@@ -166,16 +166,16 @@ namespace Info
                 // (can be configured as either type [int] or name [std::string] on the parameter-server)
                 param_name = "solver_type";
 
-                // Check type-identifier parameter
-                if(!Toolbox::Parameter::checkTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap))
-                {
-                    // Parameter validation failed
-                    ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        <<  ": Failed! Parameter [" << param_name << "] is missing or configured incorrectly");
+                // // Check type-identifier parameter
+                // if(!Toolbox::Parameter::checkTypeIdentifier(param_xml, param_name, kinematicSolverTypeMap))
+                // {
+                //     // Parameter validation failed
+                //     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                //         <<  ": Failed! Parameter [" << param_name << "] is missing or configured incorrectly");
 
-                    // Function return
-                    return false;
-                }
+                //     // Function return
+                //     return false;
+                // }
 
             // Solver Search-Resolution
             // -------------------------------
@@ -183,15 +183,15 @@ namespace Info
                 param_name = "search_resolution";
 
                 // Check parameter
-                if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeDouble))
-                {
-                    // Parameter validation failed
-                    ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
+                // if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeDouble))
+                // {
+                //     // Parameter validation failed
+                //     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                //         <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
 
-                    // Function return
-                    return false;
-                }
+                //     // Function return
+                //     return false;
+                // }
 
             // Solver Timeout
             // -------------------------------
@@ -199,15 +199,15 @@ namespace Info
                 param_name = "timeout";
 
                 // Check parameter
-                if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeDouble))
-                {
-                    // Parameter validation failed
-                    ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
+                // if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeDouble))
+                // {
+                //     // Parameter validation failed
+                //     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                //         <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
 
-                    // Function return
-                    return false;
-                }
+                //     // Function return
+                //     return false;
+                // }
 
             // Solver Attempts
             // -------------------------------
@@ -215,15 +215,15 @@ namespace Info
                 param_name = "attempts";
 
                 // Check parameter
-                if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeInt))
-                {
-                    // Parameter validation failed
-                    ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
+                // if(!Toolbox::Parameter::checkParameter(param_xml, param_name, XmlRpc::XmlRpcValue::TypeInt))
+                // {
+                //     // Parameter validation failed
+                //     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                //         <<  ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
 
-                    // Function return
-                    return false;
-                }
+                //     // Function return
+                //     return false;
+                // }
 
             // Function return
             return true;

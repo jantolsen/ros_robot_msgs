@@ -53,6 +53,9 @@ void testFunc()
     ROS_INFO_STREAM("Attempts: " << infoKinMsg.attempts);
     ROS_INFO(" ");
 
+
+    // ROS_INFO_STREAM(" Attempts data-type " << decltype(infoKinMsg.attempts));
+
 } // Function end: testFunc()
 
 
