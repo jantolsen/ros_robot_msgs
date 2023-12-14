@@ -63,17 +63,7 @@ namespace Info
 
     // Constants
     // -------------------------------
-        // Kinematic Solver Type Map
-        // (Matches the solver-types defined in InfoKinematics.msg)
-        static std::map<std::string, int> const kinematicSolverTypeMap =
-        {
-            {"KDL", KinematicSolverType::KDL},
-            {"OPW", KinematicSolverType::OPW},
-            {"TRACIK", KinematicSolverType::TRACIK},
-            {"LMA", KinematicSolverType::LMA},
-            {"CACHED_KDL", KinematicSolverType::CACHED_KDL},
-            {"CACHED_TRACIK", KinematicSolverType::CACHED_TRACIK}
-        };
+        
 
 
     // Info-Kinematics-Handler Class
@@ -112,6 +102,16 @@ namespace Info
             void test(
                 std::string param, 
                 info_msgs::InfoKinematics& info_kinematics);
+
+
+            // Get Kinematic-Solver-Type Map
+            // -------------------------------
+            /** \brief Get the Kinematic-Solver-Type Map
+            * Each solver-type [KinematicSolverType] is paired with a name (std::string),
+            * where the entries of solver-types matches the defined types in InfoKinematics.msg.
+            * \return Kinematic Solver Type Map [std::map<std::string, KinematicSolverType>]
+            */
+            std::map<std::string, KinematicSolverType> getKinematicSolverTypeMap();
 
         // Protected Class members
         // -------------------------------
@@ -152,17 +152,19 @@ namespace Info
                 info_msgs::InfoKinematics& info_kinematics);
 
 
-            // Validate Information-Kinematics Parameter Data
-            // -------------------------------
-            /** \brief Validate Information-Kinematics parameter data.
-            * Parameters are obtained from XmlRpcValue data-type. Which acts as a generic collector.
-            * This function runs through each element of the parameter data
-            * and ensured its correctly configured according to the info-message-type
-            * \param param_xml Information-Kinematics parameters [XmlRpc::XmlRpcValue]
-            * \return Function result: Successful/Unsuccessful (true/false)
-            */
-            static bool validateParamInfoKinematics(
-                const XmlRpc::XmlRpcValue& param_xml);
+            // // Validate Information-Kinematics Parameter Data
+            // // -------------------------------
+            // /** \brief Validate Information-Kinematics parameter data.
+            // * Parameters are obtained as XmlRpcValue data-type, Which acts as a generic collector.
+            // * This function runs through each element of the parameter data
+            // * and ensured its correctly configured according to the info-message-type
+            // * \param param_xml Information-Kinematics parameters [XmlRpc::XmlRpcValue]
+            // * \param info_kinematics Reference to Information-Kinematics [info_msgs::InfoKinematics]
+            // * \return Function result: Successful/Unsuccessful (true/false)
+            // */
+            // void validateInfoKinematics(
+            //     const XmlRpc::XmlRpcValue& param_xml,
+            //     info_msgs::InfoKinematics& info_kinematics);
 
 
         // Private Class members
@@ -172,6 +174,25 @@ namespace Info
             // Class-Name-Prefix for terminal message
             static const std::string CLASS_PREFIX;
 
+            // Kinematic Solver Type Map
+            std::map<std::string, int> const kinematicSolverTypeMap_;
+            
+            // Initialize Kinematic Solver Type Map
+            // -------------------------------
+            /** \brief Initialize Kinematic Solver Type Map.
+            * Each solver-type [KinematicSolverType] is paired with a name (std::string),
+            * where the entries of solver-types matches the defined types in InfoKinematics.msg.
+            * Function initializes the local Kinematic Solver Type Map [std::map<std::string, KinematicSolverType>]
+            */
+            std::map<std::string, KinematicSolverType> initKinematicSolverTypeMap();
+
+            // Handle Error: Load Parameter Data
+            // -------------------------------
+            /** \brief Error-Handler when loading parameter data fails.
+            * Function reports error message and throws exception.
+            * \param param_name Name of parameter data that failed loading [std::string]
+            */
+            void handleErrorLoadParam(std::string param_name);
 
     }; // End Class: InfoKinematicsHandler
 } // End Namespace: Info
