@@ -61,7 +61,7 @@ namespace Info
                 << ": Initializing class");
 
             // Initialize Kinematics-Solver-Type Map
-            kinematicSolverTypeMap_ = initKinematicSolverTypeMap();
+            initKinematicSolverTypeMap(kinematicSolverTypeMap_);
         } // Function End: init()
 
 
@@ -72,7 +72,7 @@ namespace Info
             info_msgs::InfoKinematics& info_kinematics)
         {
             // Initialize Kinematics-Solver-Type Map
-            kinematicSolverTypeMap_ = initKinematicSolverTypeMap();
+            initKinematicSolverTypeMap(kinematicSolverTypeMap_);
 
             // Load Parameter
             loadParamInfoKinematics(param, info_kinematics);
@@ -95,13 +95,24 @@ namespace Info
             {
                 // Failed to get parameter
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                    <<  ": Failed! Info-Kinematics Parameter [" << param_name <<"] not found");
+                    <<  ": Failed! Info-Kinematics Parameter [" << param_name << "] not found");
 
                 // Function return
                 return false;
             }
             // Function return: Call overloading function
-            return loadParamInfoKinematics(param_xml, info_kinematics);
+            if(!loadParamInfoKinematics(param_xml, info_kinematics))
+            {
+                // Loading of Information-Kinematics parameters failed
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Parameter(s) related to Information-Kinematics is either missing or configured incorrectly");
+
+                // Function return
+                return false;
+            }
+
+            // Function return
+            return true;
         } // Function End: loadParamInfoKinematics() 
 
 
@@ -116,14 +127,17 @@ namespace Info
             // Parameters are acquired as XmlRpcValue data-type which acts as generic collector.
             // Elements of the loaded parameters are validated and assigned to the respective element in the info-message-type
             // (data entries of XmlRpcValue needs to be cast to appropriate data-type)
-
+            
             // Load, validate and assign parameter data
             // -------------------------------
-            info_kinematics.solver_name = Toolbox::Parameter::getParamBool(param_xml, "solver_type").value_or(handleErrorLoadParam("solver_type"));
-            info_kinematics.solver_type = Toolbox::Parameter::searchTypeMapByName(kinematicSolverTypeMap_, "solver_type").value_or(handleErrorLoadParam("solver_type"));
-            info_kinematics.search_resolution = Toolbox::Parameter::getParamDouble(param_xml, "search_resolution").value_or(handleErrorLoadParam("search_resolution"));
-            info_kinematics.timeout = Toolbox::Parameter::getParamDouble(param_xml, "timeout").value_or(handleErrorLoadParam("timeout"));
-            info_kinematics.attempts = Toolbox::Parameter::getParamInt(param_xml, "attempts").value_or(handleErrorLoadParam("attempts"));
+            if (!Toolbox::Parameter::loadParamTypeName(info_kinematics.solver_name, param_xml, "solver_type", kinematicSolverTypeMap_)) return false;
+            if (!Toolbox::Parameter::loadParamTypeInfo(info_kinematics.solver_type, param_xml, "solver_type", kinematicSolverTypeMap_)) return false;
+            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.search_resolution, param_xml, "search_resolution")) return false;
+            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.timeout, param_xml, "timeout")) return false;
+            if (!Toolbox::Parameter::loadParamInt(info_kinematics.attempts, param_xml, "attempts")) return false;
+            
+            ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Info-Kinematics Parameter(s) loaded successfully");
 
             // Function return
             return true;
@@ -141,11 +155,9 @@ namespace Info
 
         // Initialize Kinematic Solver Type Map
         // -------------------------------
-        std::map<std::string, KinematicSolverType> InfoKinematicsHandler::initKinematicSolverTypeMap()
+        void InfoKinematicsHandler::initKinematicSolverTypeMap(
+            std::map<std::string, KinematicSolverType>& kinematic_solver_type_map)
         {
-            // Define local Kinematic-Solver-Type Map
-            std::map<std::string, KinematicSolverType> kinematic_solver_type_map;
-            
             // Initialize and populate map
             kinematic_solver_type_map =
             {
@@ -156,22 +168,6 @@ namespace Info
                 {"CACHED_KDL",      KinematicSolverType::CACHED_KDL},
                 {"CACHED_TRACIK",   KinematicSolverType::CACHED_TRACIK}
             };
-
-            // Function return
-            return kinematic_solver_type_map;
         } // Function End: initKinematicSolverTypeMap() 
 
-
-        // Handle Error: Load Parameter Data
-        // -------------------------------
-        void InfoKinematicsHandler::handleErrorLoadParam(std::string param_name)
-        {
-            // Report to terminal
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter [" << param_name <<"] is missing or configured incorrectly");
-            
-            // Throw exception
-            throw std::runtime_error("Failed to get parameter [" + param_name +"]");
-        } // Function End: handleErrorLoadParamData()
-
-} // End Namespace: Template
+} // End Namespace: Info
