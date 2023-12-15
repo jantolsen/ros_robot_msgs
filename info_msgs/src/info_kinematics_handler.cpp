@@ -62,6 +62,9 @@ namespace Info
 
             // Initialize Kinematics-Solver-Type Map
             initKinematicSolverTypeMap(kinematicSolverTypeMap_);
+
+            // Load Parameter
+            loadParamInfoKinematics(kinematics_param_name_, info_kinematics_msg_);
         } // Function End: init()
 
 
@@ -90,8 +93,8 @@ namespace Info
             XmlRpc::XmlRpcValue param_xml;
             
             // Check parameter server for Information-Kinematics parameters
-            if(!ros::param::get("/" + param_name, param_xml))
-            // if(!ros::param::get(param_name, param_xml))
+            // if(!ros::param::get("/" + param_name, param_xml))
+            if(!ros::param::get(param_name, param_xml))
             {
                 // Failed to get parameter
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
@@ -101,18 +104,7 @@ namespace Info
                 return false;
             }
             // Function return: Call overloading function
-            if(!loadParamInfoKinematics(param_xml, info_kinematics))
-            {
-                // Loading of Information-Kinematics parameters failed
-                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                    << ": Failed! Parameter(s) related to Information-Kinematics is either missing or configured incorrectly");
-
-                // Function return
-                return false;
-            }
-
-            // Function return
-            return true;
+            return loadParamInfoKinematics(param_xml, info_kinematics);
         } // Function End: loadParamInfoKinematics() 
 
 
@@ -128,27 +120,57 @@ namespace Info
             // Elements of the loaded parameters are validated and assigned to the respective element in the info-message-type
             // (data entries of XmlRpcValue needs to be cast to appropriate data-type)
             
+            // Initialize a flag to track the validation of the parameter loading
+            bool all_params_valid = true;
+
             // Load, validate and assign parameter data
-            // -------------------------------
-            if (!Toolbox::Parameter::loadParamTypeName(info_kinematics.solver_name, param_xml, "solver_type", kinematicSolverTypeMap_)) return false;
-            if (!Toolbox::Parameter::loadParamTypeInfo(info_kinematics.solver_type, param_xml, "solver_type", kinematicSolverTypeMap_)) return false;
-            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.search_resolution, param_xml, "search_resolution")) return false;
-            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.timeout, param_xml, "timeout")) return false;
-            if (!Toolbox::Parameter::loadParamInt(info_kinematics.attempts, param_xml, "attempts")) return false;
-            
-            ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Info-Kinematics Parameter(s) loaded successfully");
+            if (!Toolbox::Parameter::loadParamTypeName(info_kinematics.solver_name, param_xml, "solver_type", kinematicSolverTypeMap_)) all_params_valid = false;
+            if (!Toolbox::Parameter::loadParamTypeInfo(info_kinematics.solver_type, param_xml, "solver_type", kinematicSolverTypeMap_)) all_params_valid =  false;
+            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.search_resolution, param_xml, "search_resolution")) all_params_valid =  false;
+            if (!Toolbox::Parameter::loadParamDouble(info_kinematics.timeout, param_xml, "timeout")) all_params_valid =  false;
+            if (!Toolbox::Parameter::loadParamInt(info_kinematics.attempts, param_xml, "attempts")) all_params_valid =  false;
+
+            // Check if parameter loading was successful
+            // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
+            if(!all_params_valid)
+            {
+                // Parameter loading failed
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Parameter(s) related to Information-Kinematics is either missing or configured incorrectly");
+
+                // Function return
+                return false;
+            }
 
             // Function return
             return true;
         } // Function End: loadParamInfoKinematics() 
 
 
+        // Set Info-Kinematic Message
+        // -------------------------------
+        void InfoKinematicsHandler::setInfoKinematicsMsg(
+            const info_msgs::InfoKinematics& info_kinematics_mgs)
+        {
+            // Set local Info-Kinematics Message
+            info_kinematics_msg_ = info_kinematics_mgs;
+        } // Function End: getInfoKinematicsMsg() 
+
+
+        // Get Info-Kinematic Message
+        // -------------------------------
+        info_msgs::InfoKinematics InfoKinematicsHandler::getInfoKinematicsMsg()
+        {
+            // Return local Info-Kinematics Message
+            return info_kinematics_msg_;
+        } // Function End: getInfoKinematicsMsg() 
+
+        
         // Get Kinematic Solver Type Map
         // -------------------------------
         std::map<std::string, KinematicSolverType> InfoKinematicsHandler::getKinematicSolverTypeMap()
         {
-            // Return Kinematic-Solver-Type Map
+            // Return local Kinematic-Solver-Type Map
             return kinematicSolverTypeMap_;
         } // Function End: initKinematicSolverTypeMap() 
 

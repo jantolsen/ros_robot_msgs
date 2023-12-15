@@ -61,11 +61,6 @@ namespace Info
         };
 
 
-    // Constants
-    // -------------------------------
-        
-
-
     // Info-Kinematics-Handler Class
     // -------------------------------
     /** \brief Robot system kinematics information handler 
@@ -104,6 +99,17 @@ namespace Info
                 info_msgs::InfoKinematics& info_kinematics);
 
 
+            // Get Info-Kinematic
+            // -------------------------------
+            /** \brief Get Info-Kinematic [info_msgs::InfoKinematics]
+            *
+            * Info-Kinematic contains parameters and configuration of the system Kinematics.
+            * Data is initially loaded with parameter data from parameter-server
+            *
+            * \return Return Info-Kinematics [info_msgs::InfoKinematics]
+            */
+            info_msgs::InfoKinematics getInfoKinematicsMsg();
+
             // Get Kinematic-Solver-Type Map
             // -------------------------------
             /** \brief Get the Kinematic-Solver-Type Map
@@ -112,6 +118,18 @@ namespace Info
             * \return Kinematic Solver Type Map [std::map<std::string, KinematicSolverType>]
             */
             std::map<std::string, KinematicSolverType> getKinematicSolverTypeMap();
+
+
+            // Set Info-Kinematic
+            // -------------------------------
+            /** \brief Set Info-Kinematic [info_msgs::InfoKinematics]
+            *
+            * Info-Kinematic contains parameters and configuration of the system Kinematics.
+            * Data is initially loaded with parameter data from parameter-server
+            */
+            void setInfoKinematicsMsg(
+                const info_msgs::InfoKinematics& info_kinematics);
+
 
         // Protected Class members
         // -------------------------------
@@ -130,7 +148,9 @@ namespace Info
             // -------------------------------
             // (Function Overloading)
             /** \brief Reads and loads the Information-Kinematics from the parameter server.
+            *
             * Organize and structure the loaded parameters into the respective info-message-type
+            *
             * \param param_xml Information-Kinematics parameters [XmlRpc::XmlRpcValue]
             * \param info_general Reference to Information-Kinematics [info_msgs::InfoKinematics]
             */
@@ -143,7 +163,9 @@ namespace Info
             // -------------------------------
             // (Function Overloading)
             /** \brief Reads and loads the Information-Kinematics from the parameter server.
+            *
             * Organize and structure the loaded parameters into the respective info-message-type
+            *
             * \param param_name Name of the Information-Kinematics parameters, located on parameter server [std::string]
             * \param info_kinematics Reference to Information-Kinematics [info_msgs::InfoKinematics]
             */
@@ -159,15 +181,23 @@ namespace Info
             // Class-Name-Prefix for terminal message
             static const std::string CLASS_PREFIX;
 
+            // Information-Kinematics Parameter Name
+            std::string kinematics_param_name_;
+
+            // Information-Kinematics Message
+            info_msgs::InfoKinematics info_kinematics_msg_;
+
             // Kinematic Solver Type Map
             std::map<std::string, KinematicSolverType> kinematicSolverTypeMap_;
-            
+
             // Initialize Kinematic Solver Type Map
             // -------------------------------
             /** \brief Initialize Kinematic Solver Type Map.
+            *
             * Each solver-type [KinematicSolverType] is paired with a name (std::string),
             * where the entries of solver-types matches the defined types in InfoKinematics.msg.
             * Function initializes the local Kinematic Solver Type Map [std::map<std::string, KinematicSolverType>]
+            *
             * \param map    Reference to Kinematic-Solver-Type Map [std::map<std::string, KinematicSolverType>]
             */
             void initKinematicSolverTypeMap(
