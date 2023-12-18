@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   sensor_msgs
+  robot_toolbox
 )
 
 ## System dependencies are found with CMake's conventions
@@ -54,6 +55,9 @@ add_message_files(
   DIRECTORY msg
   FILES
   dummy.msg
+  TargetData.msg
+  TargetJoint.msg
+  TargetCartesian.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -76,6 +80,7 @@ generate_messages(
   std_msgs
   geometry_msgs
   sensor_msgs
+  robot_toolbox
 )
 
 ################################################
@@ -119,6 +124,7 @@ catkin_package(
     std_msgs
     geometry_msgs
     sensor_msgs
+    robot_toolbox
   # DEPENDS 
   #   system_lib
 )
@@ -127,8 +133,8 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
+# Specify additional locations of header files
+# Your package locations should be listed before other locations
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -137,6 +143,12 @@ include_directories(
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/info_msgs.cpp
+# )
+
+# # Specify libraries to link a library or executable target against
+# target_link_libraries(
+#   ${PROJECT_NAME}
+#   ${catkin_LIBRARIES}
 # )
 
 ## Add cmake target dependencies of the library
@@ -163,6 +175,14 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+add_executable(test_target 
+  test/test_target.cpp)
+
+target_link_libraries(test_target
+  ${catkin_LIBRARIES}
+  # ${PROJECT_NAME}
+)
 
 #############
 ## Install ##

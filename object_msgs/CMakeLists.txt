@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   sensor_msgs
+  robot_toolbox
 )
 
 ## System dependencies are found with CMake's conventions
@@ -76,6 +77,7 @@ generate_messages(
   std_msgs
   geometry_msgs
   sensor_msgs
+  robot_toolbox
 )
 
 ################################################
@@ -118,6 +120,7 @@ catkin_package(
     rospy 
     std_msgs
     geometry_msgs
+    robot_toolbox
   # DEPENDS 
   #   system_lib
 )
