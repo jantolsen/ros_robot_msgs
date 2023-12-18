@@ -15,7 +15,7 @@
 
         <!-- System Settings -->
         <!-- (Load global settings and parameters of system to parameter server) -->
-        <rosparam command="load" file="$(find info_msgs)/test/test_settings.yaml" />
+        <rosparam command="load" file="$(find info_msgs)/test/test_kinematic_settings.yaml" />
 
     <!-- ############################## -->
     <!--        Node Launching          -->

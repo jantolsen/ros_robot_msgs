@@ -1,0 +1,19 @@
+# Test: Kinematic Settings
+# -------------------------------
+# Description:
+#   Test Setting/Parameter file for Kinematics configuration
+#
+# Version:
+#   0.1 -   Initial version
+#           [18.11.2023] - Jan T. Olsen
+# -------------------------------
+
+# ----- General ----- #
+general:
+  # ----- Kinematics ----- #
+  kinematics:
+    # Solver-Type: [KDL, OPW, TRACIK, LMA, CACHED_KDL, CACHED_TRACIK]
+    solver_type:        KDL
+    search_resolution:  0.005
+    timeout:            0.005
+    attempts:           5
