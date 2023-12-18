@@ -1,0 +1,93 @@
+# Test: Target Configuration
+# -------------------------------
+# Description:
+#   Setting/Parameter file for targets
+#
+# Version:
+#   0.1 -   Initial version
+#           [18.12.2023] - Jan T. Olsen
+# -------------------------------
+
+# ----- Target List ----- #
+target_list:
+  
+  # ----- Target #1 ----- #
+  - # Target Name:
+    # (unique name for defined target)
+    name:         point_a
+    # Target Type:
+    #   JOINT:     Joint target
+    #   CARTESIAN: Cartesian target
+    type:         JOINT
+    # Target Joint Position:
+    # (joint1, joint2, joint3, joint4, joint5, joint6) [deg]
+    position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+  # ----- Target #2 ----- #
+  - # Target Name:
+    # (unique name for defined target)
+    name:         point_b
+
+    # Target Type:
+    #   JOINT:     Joint target
+    #   CARTESIAN: Cartesian target
+    type:         CARTESIAN
+
+    # Target reference frame:
+    # (frame for which target pose is given relative to)
+    ref_frame:    "world"
+
+    # Target Cartesian Pose:
+    # (relative to reference frame)
+    pose:
+      # Position (x, y, z) [m]
+      position: [0.000, 0.000, 0.000]
+      # Orientation (rx, ry, rz) [deg]
+      orientation: [0.000, 0.000, 0.000]
+    
+  # ----- Target #3 ----- #
+  - # Target Name:
+    # (unique name for defined target)
+    name:         point_c
+
+    # Target Type: 
+    #   JOINT:     Joint target
+    #   CARTESIAN: Cartesian target
+    type:         JOINT
+
+    # Target Joint Position [deg]
+    position:
+      q1: 0.0
+      q2: 0.0
+      q3: 0.0
+      q4: 0.0
+      q5: 0.0
+      q6: 0.0
+      q7: 0.0
+
+  # ----- Target #4 ----- #
+  - # Target Name:
+    # (unique name for defined target)
+    name:         point_d
+
+    # Target Type: 
+    #   JOINT:     Joint target
+    #   CARTESIAN: Cartesian target
+    type:         CARTESIAN
+
+    # Target reference frame:
+    # (frame for which target pose is given relative to)
+    ref_frame:    "world"
+
+    # Target Cartesian Pose:
+    pose:
+      # Target Position [m]
+      position:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      # Target Orientation [deg] 
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0

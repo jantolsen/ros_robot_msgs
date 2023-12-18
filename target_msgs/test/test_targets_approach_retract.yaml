@@ -1,0 +1,166 @@
+# Test: Target Configuration
+# -------------------------------
+# Description:
+#   Setting/Parameter file for targets
+#
+# Version:
+#   0.1 -   Initial version
+#           [18.12.2023] - Jan T. Olsen
+# -------------------------------
+
+# ----- Target List ----- #
+target_list:
+  
+  # ----- Target #1 ----- #
+  # Target Point A:
+  # Cartesian type target with approach- and retract-vector
+  - name:         "Point_A"
+    # Target-Type: [JOINT, CARTESIAN]
+    type:         "JOINT"
+    # Target Joint Position [deg]
+    position:
+      q1: 0.0
+      q2: 0.0 
+      q3: 0.0
+      q4: 0.0
+      q5: 0.0
+      q6: 0.0
+
+  # ----- Target #2 ----- #
+  # Target Point B:
+  # Cartesian type target with approach- and retract-vector
+  - name:         "Point_B"
+    # Target-Type: [JOINT, CARTESIAN]
+    type:         "CARTESIAN"
+    # Operation-Type: [MOVE, PICK, PLACE]
+    operation:    "MOVE"
+    # Reference frame:
+    ref_frame:    "world"
+    # Target Cartesian Pose:
+    pose:
+      # Target Position [m]
+      # (relative to reference frame)
+      position:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      # Target Orientation [deg] 
+      # (relative to eoat mount frame)
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    approach:
+      # Approach Direction [m]
+      direction:
+        x: 1
+        y: 0
+        z: 0
+      # Approach Distance [m]
+      distance:   0.100
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    retract:
+      # Approach Direction [m]
+      direction:
+        x: -1
+        y: 0
+        z: 0
+      # Approach Distance [m]
+      distance:   0.100
+
+
+  # ----- Target #3 ----- #
+  # Target Point C:
+  # Cartesian type target with approach- and retract-vector
+  - name:         "Point_C"
+    # Target-Type: [JOINT, CARTESIAN]
+    type:         "CARTESIAN"
+    # Operation-Type: [MOVE, PICK, PLACE]
+    operation:    "PICK"
+    # Reference frame:
+    ref_frame:    "world"
+    # Target Cartesian Pose:
+    pose:
+      # Target Position [m]
+      # (relative to reference frame)
+      position:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      # Target Orientation [deg] 
+      # (relative to eoat mount frame)
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    approach:
+      # Approach Direction [m]
+      direction:
+        x: 1
+        y: 0
+        z: 0
+      # Approach Distance [m]
+      distance:   0.100
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    retract:
+      # Approach Direction [m]
+      direction:
+        x: 0
+        y: 0
+        z: 1
+      # Approach Distance [m]
+      distance:   0.250
+
+
+  # ----- Target #4 ----- #
+  # Target Point D:
+  # Cartesian type target with approach- and retract-vector
+  - name:         "Point_D"
+    # Target-Type: [JOINT, CARTESIAN]
+    type:         "CARTESIAN"
+    # Operation-Type: [MOVE, PICK, PLACE]
+    operation:    "PLACE"
+    # Reference frame:
+    ref_frame:    "world"
+    # Target Cartesian Pose:
+    pose:
+      # Target Position [m]
+      # (relative to reference frame)
+      position:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      # Target Orientation [deg] 
+      # (relative to eoat mount frame)
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    approach:
+      # Approach Direction [m]
+      direction:
+        x: 0
+        y: 0
+        z: -1
+      # Approach Distance [m]
+      distance:   0.250
+    # Target Approach Vector:
+    # (relative translation to target pose in eoat frame)
+    retract:
+      # Approach Direction [m]
+      direction:
+        x: -1
+        y: 0
+        z: 0
+      # Approach Distance [m]
+      distance:   0.100
+```
+

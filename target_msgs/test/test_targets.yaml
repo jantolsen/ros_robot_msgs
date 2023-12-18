@@ -1,0 +1,118 @@
+# Test: Target Configuration
+# -------------------------------
+# Description:
+#   Setting/Parameter file for targets.
+#   This file defines a list of targets for a robotic system. 
+#
+#   Each target has the following properties:
+#    General properties:
+#     - name:           A unique identifier for the target.
+#     - type:           Target type. It can be either 'JOINT' or 'CARTESIAN'.
+#       * JOINT:        Joint space target. 'Position' property contains a list of robot joint angles.
+#       * CARTESIAN:    Cartesian space target. 'Pose' property contains 'position' and 'orientation' properties.
+#
+#    Joint-target properties:
+#     - position:       A list of robot joint angles [deg] defining the target in the joint space.
+#       * q1:           Joint angle [deg] for joint 1.
+#       * q2:           Joint angle [deg] for joint 2.
+#       * q3:           Joint angle [deg] for joint 3.
+#       * q4:           Joint angle [deg] for joint 4.
+#       * q5:           Joint angle [deg] for joint 5.
+#       * q6:           Joint angle [deg] for joint 6.
+#
+#    Cartesian-target properties:
+#     - ref_frame:      Reference frame for which the target pose is given relative to.
+#     - pose:           Target pose relative to the reference frame.
+#       - position:     Target position [m] relative to the reference frame
+#         * x:          Position [m] along the x-axis
+#         * y:          Position [m] along the y-axis
+#         * z:          Position [m] along the z-axis
+#       - orientation:  Target orientation [deg] relative to the reference frame.
+#         * rx:         Rotation [deg] around the x-axis
+#         * ry:         Rotation [deg] around the y-axis
+#         * rz:         Rotation [deg] around the z-axis
+#
+#   Example: Joint-Target
+#    - name:         target_a
+#      type:         JOINT
+#      position:     
+#        q1:  0.0
+#        q2:  0.0
+#        q3:  0.0
+#        q4:  0.0
+#        q5:  0.0
+#        q6:  0.0
+#
+#   Example: Cartesian-Target
+#    - name:         target_b
+#      type:         CARTESIAN
+#      ref_frame:    "world"
+#      pose:
+#        position:
+#          x: 0.0
+#          y: 0.0
+#          z: 0.0
+#        orientation:
+#          rx: 0.0
+#          ry: 0.0
+#          rz: 0.0
+#
+# Version:
+#   0.1 -   Initial version
+#           [18.12.2023] - Jan T. Olsen
+# -------------------------------
+
+
+# ----- Target List ----- #
+targets:
+  # ----- Target #1 ----- #
+  - name:       point_a
+    type:       CARTESIAN
+    ref_frame:  "world"
+    pose:
+      position:
+        x:  1.0
+        y:  2.0
+        z:  3.0
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+
+  # ----- Target #2 ----- #
+  - name:       point_b
+    type:       CARTESIAN
+    ref_frame:  "world"
+    pose:
+      position:
+        x:  4.0
+        y:  5.0
+        z:  6.0
+      orientation:
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+
+  # ----- Target #3 ----- #
+  - name:   point_c
+    type:   JOINT
+    position:
+      q1:   0.0
+      q2:   0.0
+      q3:   0.0
+      q4:   0.0
+      q5:   0.0
+      q6:   0.0
+
+  # ----- Target #4 ----- #
+  - name:   point_c
+    type:   JOINT
+    position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+  # ----- Target #2 ----- #
+  - name:       point_b
+    type:       CARTESIAN
+    ref_frame:  "world"
+    pose:
+      position:     [0.000, 0.000, 0.000]
+      orientation:  [0.00, 0.00, 0.00]
