@@ -9,6 +9,6 @@
 # -------------------------------
 
 # Target Cartesian-Posiiton
-string ref_frame                # Reference frame for which pose is given relative to
+string ref_frame                # Reference frame for which target pose is relative to
 geometry_msgs/Pose pose         # Target cartesian pose
 robot_toolbox/PoseRPY pose_rpy  # Target cartesian pose-rpy
