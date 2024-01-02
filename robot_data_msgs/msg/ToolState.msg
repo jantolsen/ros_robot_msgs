@@ -14,5 +14,5 @@ string name                         # Name of tool
 string frame                        # Frame of tool
 robot_toolbox/PoseRPY pose          # Pose of tool
 geometry_msgs/Twist velocity        # Velocity of tool
-geometry_msgs/Twist acceleration    # Acceleration of tool
+geometry_msgs/Accel acceleration    # Acceleration of tool
 geometry_msgs/Wrench torque         # Torque of tool
