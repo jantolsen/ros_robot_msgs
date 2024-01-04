@@ -110,6 +110,7 @@ namespace Info
             */
             info_msgs::InfoKinematics getInfoKinematicsMsg();
 
+
             // Get Kinematic-Solver-Type Map
             // -------------------------------
             /** \brief Get the Kinematic-Solver-Type Map
@@ -153,6 +154,7 @@ namespace Info
             *
             * \param param_xml Information-Kinematics parameters [XmlRpc::XmlRpcValue]
             * \param info_general Reference to Information-Kinematics [info_msgs::InfoKinematics]
+            * \return Function return: Successful/Unsuccessful (true/false) [bool]
             */
             bool loadParamInfoKinematics(
                 const XmlRpc::XmlRpcValue& param_xml,
@@ -168,6 +170,7 @@ namespace Info
             *
             * \param param_name Name of the Information-Kinematics parameters, located on parameter server [std::string]
             * \param info_kinematics Reference to Information-Kinematics [info_msgs::InfoKinematics]
+            * \return Function return: Successful/Unsuccessful (true/false) [bool]
             */
             bool loadParamInfoKinematics(
                 const std::string& param_name,
