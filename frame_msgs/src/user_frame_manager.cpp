@@ -265,46 +265,51 @@
         }
 
         // Evaluate parameter(s) type
-        // Array: Parameter data contains configuration on multiple user-frames
-        if(Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeArray))
+        switch (param_xml.getType())
         {
-            // Iterate over user-frames parameter elements
-            for(std::size_t i = 0; i < param_xml.size(); i++)
-            {
-                // Check if user-frame element is of type struct
-                if(!Toolbox::Parameter::checkDataType(param_xml[i], XmlRpc::XmlRpcValue::TypeStruct))
+            // Array: 
+            // Parameter data contains configuration on multiple user-frames
+            case XmlRpc::XmlRpcValue::TypeArray:
+                // Iterate over user-frames parameter elements
+                for(std::size_t i = 0; i < param_xml.size(); i++)
                 {
-                    // Parameter is not a struct
-                    ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        << ": Failed! User-Frames Element [" << i << "] is not a struct");
+                    // Check if user-frame element is of type struct
+                    if(!Toolbox::Parameter::checkDataType(param_xml[i], XmlRpc::XmlRpcValue::TypeStruct))
+                    {
+                        // Parameter is not a struct
+                        ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                            << ": Failed! User-Frames Element [" << i << "] is not a struct");
 
-                    // Function return
-                    return false;
+                        // Function return
+                        return false;
+                    }
+
+                    // Append user-frame parameter element [i] to local parameter vector
+                    param_vec_.push_back(param_xml[i]);
                 }
+                // Case break
+                break;
+            
+            // Struct: 
+            // Parameter data contains configuration on a singe user-frame
+            case XmlRpc::XmlRpcValue::TypeStruct:
+                // Append user-frame parameter element to parameter vector
+                param_vec_.push_back(param_xml);
 
-                // Append user-frame parameter element [i] to local parameter vector
-                param_vec_.push_back(param_xml[i]);
-            } 
-        }
+                // Case break
+                break;
 
-        // Struct: Parameter data contains configuration on a singe user-frame
-        else if(Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
-        {
-            // Append user-frame parameter element to parameter vector
-            param_vec_.push_back(param_xml);
-        }
+            // Unknown: 
+            // Parameter of user-frame is configured with unknown type
+            default:
+                // Failed to get parameter(s)
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! User-Frames Parameter(s) [" << param_name <<"] is wrongly defined." 
+                    << " Neither a single- or multi-entry of User-Frames Parameters(s) is found");
 
-        // Unknown: Parameter of user-frame is configured with unknown type
-        else
-        {
-            // Failed to get parameter(s)
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! User-Frames Parameter(s) [" << param_name <<"] is wrongly defined." 
-                << " Neither a single- or multi-entry of User-Frames Parameters(s) is found");
-
-            // Function return
-            return false;
-        }
+                // Function return
+                return false;
+        } // Switch End: param_xml.getType()
 
         // Report to terminal
         ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
