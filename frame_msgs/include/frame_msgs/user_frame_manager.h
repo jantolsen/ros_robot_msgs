@@ -46,6 +46,10 @@
     // Frame Messages
     #include "frame_msgs/UserFrame.h"
 
+    // Frame Services
+    #include "frame_msgs/CreateUserFrame.h"
+    #include "frame_msgs/UpdateUserFrame.h"
+
     // User-Frame Context
     #include "frame_msgs/user_frame_context.h"
 
@@ -252,34 +256,38 @@ class UserFrameManager
         std::shared_ptr<ros::ServiceServer> updateUserFrameObject_server_;  // ROS Server for updating User-Frame object
 
 
-        // // Service Callback: Create User-Frame object
-        // // -------------------------------
-        // /** \brief Create User-Frame object Callback function.
-        // *
-        // * Move the corresponding Workspace-Object 
-        // *
-        // * \param request    Service-Request [frame_msgs::UserFrameCreate::Request]
-        // * \param response   Service-Response [frame_msgs::UserFrameCreate::Response]
-        // * \return Function result: Successful/Unsuccessful (true/false)
-        // */
-        // bool createUserFrameObjectCB(
-        //     frame_msgs::UserFrameCreate::Request& req,
-        //     frame_msgs::UserFrameCreate::Response& res);
+        // Service Callback: Create User-Frame object
+        // -------------------------------
+        /** \brief Create User-Frame object callback function.
+        *
+        * Service callback function for creating a custom User-Frame object.
+        * Requires information on name, reference frame and pose of the user-frame.
+        *
+        * \param request    Service-Request [frame_msgs::CreateUserFrame::Request]
+        * \param response   Service-Response [frame_msgs::CreateUserFrame::Response]
+        * \return Function result: Successful/Unsuccessful (true/false)
+        */
+        bool createUserFrameObjectCB(
+            frame_msgs::CreateUserFrame::Request& req,
+            frame_msgs::CreateUserFrame::Response& res);
 
         
-        // // Service Callback: Update User-Frame object
-        // // -------------------------------
-        // /** \brief Update Allowed-Collision-Matrix (ACM).
-        // *
-        // * Add/Remove collision-entries for corresponding object-elements 
-        // *
-        // * \param request    Service-Request [frame_msgs::UserFrameUpdate::Request]
-        // * \param response   Service-Response [frame_msgs::UserFrameUpdate::Response]
-        // * \return Function result: Successful/Unsuccessful (true/false)
-        // */
-        // bool updateUserFrameObjectCB(
-        //     frame_msgs::UserFrameUpdate::Request& req,
-        //     frame_msgs::UserFrameUpdate::Response& res);
+        // Service Callback: Update User-Frame object
+        // -------------------------------
+        /** \brief Update User-Frame object callback function.
+        *
+        * Service callback function for updating a custom User-Frame object.
+        * Function requires information on name of the user-frame to update.
+        * The following parameters can be updated: reference frame and pose of the user-frame.
+        *
+        * \param request    Service-Request [frame_msgs::UpdateUserFrame::Request]
+        * \param response   Service-Response [frame_msgs::UpdateUserFrame::Response]
+        * \return Function result: Successful/Unsuccessful (true/false)
+        */
+        bool updateUserFrameObjectCB(
+            frame_msgs::UpdateUserFrame::Request& req,
+            frame_msgs::UpdateUserFrame::Response& res);
+
 
 }; // End Class: UserFrameManager
 #endif // USER_FRAME_MANAGER_H 

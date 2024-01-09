@@ -1,4 +1,4 @@
-# Toolbox - User Frame
+# Frame - User Frame
 # -------------------------------
 # Description:
 #   Message-type for User Frame

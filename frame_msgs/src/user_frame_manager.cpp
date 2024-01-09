@@ -37,11 +37,11 @@
         nh_(nh),
         param_name_(param_name)
     {
-        // // Initialize Service-Server(s)
-        // auto tmp_createUserFrameObject_server_ = nh_.advertiseService("/user_frame_create", &UserFrameManager::createUserFrameObject, this);
-        // auto tmp_updateUserFrameObject_server_ = nh_.advertiseService("/user_frame_update", &UserFrameManager::updateUserFrameObject, this);
-        // createUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_createUserFrameObject_server_);
-        // updateUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_updateUserFrameObject_server_);
+        // Initialize Service-Server(s)
+        auto tmp_createUserFrameObject_server_ = nh_.advertiseService("/user_frame/create", &UserFrameManager::createUserFrameObjectCB, this);
+        auto tmp_updateUserFrameObject_server_ = nh_.advertiseService("/user_frame/update", &UserFrameManager::updateUserFrameObjectCB, this);
+        createUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_createUserFrameObject_server_);
+        updateUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_updateUserFrameObject_server_);
 
         // Initialize user-frame manager
         init();
@@ -320,21 +320,223 @@
     } // Function End: loadParamData() 
 
 
-    // // Service Callback: Create User-Frame object
-    // // -------------------------------
-    // bool UserFrameManager::createUserFrameObjectCB(
-    //     frame_msgs::UserFrameCreate::Request& req,
-    //     frame_msgs::UserFrameCreate::Response& res)
-    // {
+    // Service Callback: Create User-Frame object
+    // -------------------------------
+    bool UserFrameManager::createUserFrameObjectCB(
+        frame_msgs::CreateUserFrame::Request& req,
+        frame_msgs::CreateUserFrame::Response& res)
+    {
+        // Validate request
+        // -------------------------------
+            // Check for empty user-frame name
+            if(req.name.empty())
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame name is empty";
 
-    // } // Function End: createUserFrameObjectCB() 
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+            // Check for empty reference frame
+            if(req.ref_frame.empty())
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame reference frame is empty";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+            // Check for empty pose
+            if(Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame pose is empty";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+            // Check for duplicate user-frame name
+            boost::optional<std::shared_ptr<UserFrameContext>> result_search = getUserFrameObject(req.name);
+            if(result_search)
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame [" + req.name + "] already exists";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+        // Create User-Frame Object
+        // -------------------------------
+            // Define user-frame data based on request
+            frame_msgs::UserFrame user_frame_data;
+            user_frame_data.name = req.name;
+            user_frame_data.ref_frame = req.ref_frame;
+            user_frame_data.poseRPY = req.poseRPY;
+
+            // Assign Transform data of User-Frame
+            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.poseRPY);
+            user_frame_data.transformStamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
+
+            // Create user-frame object
+            auto userFrameObject = createUserFrameObject(user_frame_data);
+
+            // Update Service-Response
+            res.success = true;
+            res.message = CLASS_PREFIX + __FUNCTION__ + ": Successfully created User-Frame [" + req.name + "]";
+
+            // Debug
+            userFrameObject->printUserFrame();
+
+        // Service validation
+        if(!res.success)
+        {
+            // Report error to terminal
+            ROS_ERROR_STREAM(res.message);
+
+            // Function return
+            return false;
+        }
+
+        // Report info to terminal
+        ROS_INFO_STREAM(res.message);
+        
+        // Function return
+        return true;
+    } // Function End: createUserFrameObjectCB() 
 
     
-    // // Service Callback: Update User-Frame object
-    // // -------------------------------
-    // bool UserFrameManager::updateUserFrameObjectCB(
-    //     frame_msgs::UserFrameUpdate::Request& req,
-    //     frame_msgs::UserFrameUpdate::Response& res)
-    // {
+    // Service Callback: Update User-Frame object
+    // -------------------------------
+    bool UserFrameManager::updateUserFrameObjectCB(
+        frame_msgs::UpdateUserFrame::Request& req,
+        frame_msgs::UpdateUserFrame::Response& res)
+    {
+        // Validate request
+        // -------------------------------
+            // Check for empty user-frame name
+            if(req.name.empty())
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame name is empty";
 
-    // } // Function End: updateUserFrameObjectCB() 
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+            // Check for existing user-frame
+            boost::optional<std::shared_ptr<UserFrameContext>> result_user_frame = getUserFrameObject(req.name);
+            if(!result_user_frame)
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame [" + req.name + "] does NOT exist";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+
+            // Check for empty pose
+            if(Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame pose is empty";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+            // Check for existing user-frame
+            if(!getUserFrameObject(req.name))
+            {
+                // Update Service-Response
+                res.success = false;
+                res.message = CLASS_PREFIX + __FUNCTION__ + ": Failed! User-Frame [" + req.name + "] does NOT exist";
+                
+                // Report error to terminal
+                ROS_ERROR_STREAM(res.message);
+
+                // Function return
+                return false;
+            }
+
+        // Update User-Frame Object
+        // -------------------------------
+            // Define user-frame data based on existing data of user-frame object
+            frame_msgs::UserFrame user_frame_data = result_user_frame.value()->getUserFrameData();
+
+            // Check for empty reference frame
+            if(!req.ref_frame.empty())
+            {
+                // Update reference frame of user-frame data
+                user_frame_data.ref_frame = req.ref_frame;
+            }
+
+            // Check for empty pose
+            if(!Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            {
+                // Update pose-rpy of user-frame data
+                user_frame_data.poseRPY = req.poseRPY;
+            }
+
+            // Update Transform data of User-Frame
+            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.poseRPY);
+            user_frame_data.transformStamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
+
+            // Update user-frame object
+            updateUserFrameObject(result_user_frame.value(), user_frame_data);
+
+            // Update Service-Response
+            res.success = true;
+            res.message = CLASS_PREFIX + __FUNCTION__ + ": Successfully updated User-Frame [" + req.name + "]";
+
+            // Debug
+            result_user_frame.value()->printUserFrame();
+
+        // Service validation
+        if(!res.success)
+        {
+            // Report error to terminal
+            ROS_ERROR_STREAM(res.message);
+
+            // Function return
+            return false;
+        }
+
+        // Report info to terminal
+        ROS_INFO_STREAM(res.message);
+        
+        // Function return
+        return true;
+    } // Function End: updateUserFrameObjectCB() 

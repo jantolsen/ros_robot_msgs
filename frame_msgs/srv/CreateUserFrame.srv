@@ -1,0 +1,21 @@
+# Frame - Create User Frame
+# -------------------------------
+# Description:
+#   Service-type for creating user frame
+#   Used to define a custom user frame
+#
+# Version:
+#   0.1 -   Initial version
+#           [09.01.2024] - Jan T. Olsen
+# -------------------------------
+
+# Service-Request
+string name                     # Name of user frame
+string ref_frame                # Reference frame for which the user frame is relative to
+robot_toolbox/PoseRPY poseRPY   # Pose-RPY (user friendly configuration of pose)
+
+---
+
+# Service-Response
+bool success                    # Service result Successful/Unsuccessful [true/false]
+string message                  # Service-Message 
