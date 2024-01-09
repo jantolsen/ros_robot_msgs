@@ -96,10 +96,10 @@ namespace Info
             */
             void test(
                 std::string param, 
-                info_msgs::InfoKinematics& info_kinematics);
+                info_msgs::InfoKinematics& info_kinematics_data);
 
 
-            // Get Info-Kinematic
+            // Get Info-Kinematic Data
             // -------------------------------
             /** \brief Get Info-Kinematic [info_msgs::InfoKinematics]
             *
@@ -108,7 +108,7 @@ namespace Info
             *
             * \return Return Info-Kinematics [info_msgs::InfoKinematics]
             */
-            info_msgs::InfoKinematics getInfoKinematicsMsg();
+            info_msgs::InfoKinematics getInfoKinematicsData();
 
 
             // Get Kinematic-Solver-Type Map
@@ -121,15 +121,15 @@ namespace Info
             std::map<std::string, KinematicSolverType> getKinematicSolverTypeMap();
 
 
-            // Set Info-Kinematic
+            // Update Info-Kinematic Data
             // -------------------------------
-            /** \brief Set Info-Kinematic [info_msgs::InfoKinematics]
+            /** \brief Update Info-Kinematic [info_msgs::InfoKinematics]
             *
             * Info-Kinematic contains parameters and configuration of the system Kinematics.
             * Data is initially loaded with parameter data from parameter-server
             */
-            void setInfoKinematicsMsg(
-                const info_msgs::InfoKinematics& info_kinematics);
+            void updateInfoKinematicsData(
+                const info_msgs::InfoKinematics& info_kinematics_data);
 
 
         // Protected Class members
@@ -153,12 +153,12 @@ namespace Info
             * Organize and structure the loaded parameters into the respective info-message-type
             *
             * \param param_xml Information-Kinematics parameters [XmlRpc::XmlRpcValue]
-            * \param info_general Reference to Information-Kinematics [info_msgs::InfoKinematics]
+            * \param info_kinematics_data Reference to Information-Kinematics [info_msgs::InfoKinematics]
             * \return Function return: Successful/Unsuccessful (true/false) [bool]
             */
             bool loadParamInfoKinematics(
                 const XmlRpc::XmlRpcValue& param_xml,
-                info_msgs::InfoKinematics& info_kinematics);
+                info_msgs::InfoKinematics& info_kinematics_data);
 
 
             // Load Information-Kinematics Parameter Data
@@ -169,12 +169,12 @@ namespace Info
             * Organize and structure the loaded parameters into the respective info-message-type
             *
             * \param param_name Name of the Information-Kinematics parameters, located on parameter server [std::string]
-            * \param info_kinematics Reference to Information-Kinematics [info_msgs::InfoKinematics]
+            * \param info_kinematics_data Reference to Information-Kinematics [info_msgs::InfoKinematics]
             * \return Function return: Successful/Unsuccessful (true/false) [bool]
             */
             bool loadParamInfoKinematics(
                 const std::string& param_name,
-                info_msgs::InfoKinematics& info_kinematics);
+                info_msgs::InfoKinematics& info_kinematics_data);
 
 
         // Private Class members
@@ -188,7 +188,7 @@ namespace Info
             std::string kinematics_param_name_;
 
             // Information-Kinematics Message
-            info_msgs::InfoKinematics info_kinematics_msg_;
+            info_msgs::InfoKinematics info_kinematics_data_;
 
             // Kinematic Solver Type Map
             std::map<std::string, KinematicSolverType> kinematicSolverTypeMap_;

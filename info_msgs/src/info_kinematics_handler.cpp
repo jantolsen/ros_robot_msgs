@@ -64,7 +64,7 @@ namespace Info
             // initKinematicSolverTypeMap(kinematicSolverTypeMap_);
 
             // // Load Parameter
-            // loadParamInfoKinematics(kinematics_param_name_, info_kinematics_msg_);
+            // loadParamInfoKinematics(kinematics_param_name_, info_kinematics_data_);
         } // Function End: init()
 
 
@@ -72,13 +72,13 @@ namespace Info
         // -------------------------------
         void InfoKinematicsHandler::test(
             std::string param, 
-            info_msgs::InfoKinematics& info_kinematics)
+            info_msgs::InfoKinematics& info_kinematics_data)
         {
             // Initialize Kinematics-Solver-Type Map
             initKinematicSolverTypeMap(kinematicSolverTypeMap_);
 
             // Load Parameter
-            loadParamInfoKinematics(param, info_kinematics);
+            loadParamInfoKinematics(param, info_kinematics_data);
         } // Function End: init()
 
 
@@ -87,7 +87,7 @@ namespace Info
         // (Function Overloading)
         bool InfoKinematicsHandler::loadParamInfoKinematics(
             const std::string& param_name,
-            info_msgs::InfoKinematics& info_kinematics)
+            info_msgs::InfoKinematics& info_kinematics_data)
         {
             // Define local variable(s)
             XmlRpc::XmlRpcValue param_xml;
@@ -104,7 +104,7 @@ namespace Info
                 return false;
             }
             // Function return: Call overloading function
-            return loadParamInfoKinematics(param_xml, info_kinematics);
+            return loadParamInfoKinematics(param_xml, info_kinematics_data);
         } // Function End: loadParamInfoKinematics() 
 
 
@@ -113,7 +113,7 @@ namespace Info
         // (Function Overloading)
         bool InfoKinematicsHandler::loadParamInfoKinematics(
             const XmlRpc::XmlRpcValue& param_xml,
-            info_msgs::InfoKinematics& info_kinematics)
+            info_msgs::InfoKinematics& info_kinematics_data)
         {
             // Reads and loads parameter data obtained from the parameter-server
             // Parameters are acquired as XmlRpcValue data-type which acts as generic collector.
@@ -124,11 +124,11 @@ namespace Info
             bool params_valid = true;
 
             // Load, validate and assign parameter data
-            if (!Toolbox::Parameter::loadParamItemKey<std::string>(info_kinematics.solver_name, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
-            if (!Toolbox::Parameter::loadParamItemValue<int>(info_kinematics.solver_type, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
-            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics.search_resolution, param_xml, "search_resolution")) params_valid =  false;
-            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics.timeout, param_xml, "timeout")) params_valid =  false;
-            if (!Toolbox::Parameter::loadParamData<int>(info_kinematics.attempts, param_xml, "attempts")) params_valid =  false;
+            if (!Toolbox::Parameter::loadParamItemKey<std::string>(info_kinematics_data.solver_name, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
+            if (!Toolbox::Parameter::loadParamItemValue<int>(info_kinematics_data.solver_type, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
+            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics_data.search_resolution, param_xml, "search_resolution")) params_valid =  false;
+            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics_data.timeout, param_xml, "timeout")) params_valid =  false;
+            if (!Toolbox::Parameter::loadParamData<int>(info_kinematics_data.attempts, param_xml, "attempts")) params_valid =  false;
 
             // Check if parameter loading was successful
             // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
@@ -147,23 +147,23 @@ namespace Info
         } // Function End: loadParamInfoKinematics() 
 
 
-        // Set Info-Kinematic Message
+        // Update Info-Kinematic Data
         // -------------------------------
-        void InfoKinematicsHandler::setInfoKinematicsMsg(
-            const info_msgs::InfoKinematics& info_kinematics_mgs)
+        void InfoKinematicsHandler::updateInfoKinematicsData(
+            const info_msgs::InfoKinematics& info_kinematics_data)
         {
-            // Set local Info-Kinematics Message
-            info_kinematics_msg_ = info_kinematics_mgs;
-        } // Function End: getInfoKinematicsMsg() 
+            // Update local Info-Kinematics Data
+            info_kinematics_data_ = info_kinematics_data;
+        } // Function End: updateInfoKinematicsData() 
 
 
-        // Get Info-Kinematic Message
+        // Get Info-Kinematic Data
         // -------------------------------
-        info_msgs::InfoKinematics InfoKinematicsHandler::getInfoKinematicsMsg()
+        info_msgs::InfoKinematics InfoKinematicsHandler::getInfoKinematicsData()
         {
-            // Return local Info-Kinematics Message
-            return info_kinematics_msg_;
-        } // Function End: getInfoKinematicsMsg() 
+            // Return local Info-Kinematics Data
+            return info_kinematics_data_;
+        } // Function End: getInfoKinematicsData() 
 
         
         // Get Kinematic Solver Type Map
