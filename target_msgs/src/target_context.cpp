@@ -201,38 +201,42 @@
             return boost::none;
         }
 
-        // Initialize a flag to track the validation of the parameter loading
-        bool params_valid = true;
+        // Try to load parameters
+        try
+        {
+            // Load, validate and assign parameter data
+            target_data.name = Toolbox::Parameter::loadParamData<std::string>(param_xml, "name");
+            target_data.type_name = Toolbox::Parameter::loadParamItemKey<std::string>(target_type_map_, param_xml, "type");
+            target_data.type = Toolbox::Parameter::loadParamItemValue<int>(target_type_map_, param_xml, "type");
+            target_data.visible = Toolbox::Parameter::loadParamData<bool>(param_xml, "visible");
+        }
 
-        // Load, validate and assign parameter data
-        if (!Toolbox::Parameter::loadParamData<std::string>(target_data.name, param_xml, "name")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamItemKey<std::string>(target_data_.type_name, target_type_map_, param_xml, "type")) params_valid = false;
-        if (!Toolbox::Parameter::loadParamItemValue<int>(target_data.type, target_type_map_, param_xml, "type")) params_valid = false;
-        if (!Toolbox::Parameter::loadParamData<bool>(target_data.visible, param_xml, "visible")) params_valid =  false;
-
-        // Check if parameter loading was successful
-        // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
-        if(!params_valid)
+        // Parameter Load Exception(s)
+        catch (const std::exception& e) 
         {
             // Parameter loading failed
             ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to Target [" << target_data.name << "]  is either missing or configured incorrectly");
+                << ": Failed! Parameter(s) related to Target [" << target_data.name << "]" 
+                << " is either missing or configured incorrectly");
+
+            // Exception details
+            std::cerr << e.what() << std::endl;
 
             // Function return
             return boost::none;
-        }
-
+        } 
+        
         // Determine target type
         switch (static_cast<TargetType>(target_data.type))
         {
             // Target type: Joint
             case TargetType::JOINT:
                 // Load, validate and assign target-joint parameter data
-                boost::optional<target_msgs::TargetJoint> result_joint_data = loadParamJointData(param_xml["position"]);
-                if(!result_joint_data) return boost::none;
+                // boost::optional<target_msgs::TargetJoint> result_joint_data = loadParamJointData(param_xml["position"]);
+                // if(!result_joint_data) return boost::none;
 
-                // Parameter loading was successful
-                target_data.joint = result_joint_data.value();
+                // // Parameter loading was successful
+                // target_data.joint = result_joint_data.value();
 
                 // Case break
                 break;
@@ -240,11 +244,11 @@
             // Target type: Cartesian
             case TargetType::CARTESIAN:
                 // Load, validate and assign target-cartesian parameter data
-                boost::optional<target_msgs::TargetCartesian> result_cartesian_data = loadParamCartesianData(param_xml["pose"]);
-                if(!result_cartesian_data) return boost::none;
+                // boost::optional<target_msgs::TargetCartesian> result_cartesian_data = loadParamCartesianData(param_xml["pose"]);
+                // if(!result_cartesian_data) return boost::none;
 
-                // Parameter loading was successful
-                target_data.cartesian = result_cartesian_data.value();
+                // // Parameter loading was successful
+                // target_data.cartesian = result_cartesian_data.value();
 
                 // Case break
                 break;
@@ -265,7 +269,7 @@
 
     // Load Target Joint Data
     // -------------------------------
-    boost::optional<target_msgs::TargetJoint> loadParamJointData(
+    boost::optional<target_msgs::TargetJoint> TargetContext::loadParamJointData(
         const XmlRpc::XmlRpcValue& param_xml)
     {
         // Define local variable(s)
@@ -277,15 +281,18 @@
             // Array: 
             // Target-Joint data is configured as an array
             case XmlRpc::XmlRpcValue::TypeArray:
-                // Resize target joint data to match the number of joints
-                target_joint_data.position_deg.resize(param_xml.size());
+                // // Resize target joint data to match the number of joints
+                // target_joint_data.position_deg.resize(param_xml.size());
 
-                // Iterate through all joints
-                for (size_t i = 0; i < param_xml.size(); i++)
-                {
-                    // Load, validate and assign parameter data
-                    if (!Toolbox::Parameter::loadParamData<double>(target_joint_data.position_deg[i], param_xml, i)) return boost::none;
-                }
+                // // Load, validate and assign parameter data
+                // if (!Toolbox::Parameter::loadParamData<std:.vector<double>>(target_joint_data.position_deg[i], param_xml, "position")) params_valid =  false;
+
+                // // Iterate through all joints   
+                // for (size_t i = 0; i < param_xml.size(); i++)
+                // {
+                //     // Load, validate and assign parameter data
+                //     if (!Toolbox::Parameter::loadParamData<std:.vector<double>>(target_joint_data.position_deg[i], param_xml, "position")) params_valid =  false;
+                // }
 
                 // Case break
                 break;
@@ -293,12 +300,21 @@
             // Struct: 
             // Target-Joint data is configured as a struct
             case XmlRpc::XmlRpcValue::TypeStruct:
-                // Resize target joint data to match the number of joints
-                target_joint_data.position_deg.resize(param_xml.size());
+                // // Resize target joint data to match the number of joints
+                // target_joint_data.position_deg.resize(param_xml.size());
 
-                if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["position"], "q0")) params_valid =  false;
+                // if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["position"], "q0")) params_valid =  false;
 
+                // Case break
+                break;
 
+            // Unrecognized target type
+            default:
+                // Target type is not recognized
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Target type is NOT recognized");
+                // Function return
+                return boost::none;
 
         } // Switch End: param_xml.getType()
 
@@ -318,17 +334,17 @@
         bool params_valid = true;
 
         // Load, validate and assign parameter data
-        if (!Toolbox::Parameter::loadParamData<std::vector<double>>(target_joint_data.position_deg, param_xml, "position_deg")) params_valid =  false;
-
+        // if (!Toolbox::Parameter::loadParamData<std::vector<double>>(target_joint_data.position_deg, param_xml, "position_deg")) params_valid =  false;
+        return boost::none;
     } // Function End: loadParamJointData()
 
 
     // Load Target Cartesian Data
     // -------------------------------
-    boost::optional<target_msgs::TargetCartesian> loadParamCartesianData(
+    boost::optional<target_msgs::TargetCartesian> TargetContext::loadParamCartesianData(
         const XmlRpc::XmlRpcValue& param_xml)
     {
-            
+        return boost::none;
     } // Function End: loadParamCartesianData()
 
 

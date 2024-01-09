@@ -203,31 +203,34 @@
             return boost::none;
         }
 
-        // Initialize a flag to track the validation of the parameter loading
-        bool params_valid = true;
-
-        // Load, validate and assign parameter data
-        if (!Toolbox::Parameter::loadParamData<std::string>(user_frame_data.name, param_xml, "name")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<std::string>(user_frame_data.ref_frame, param_xml, "ref_frame")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["pose"]["position"], "x")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.y, param_xml["pose"]["position"], "y")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.z, param_xml["pose"]["position"], "z")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.x, param_xml["pose"]["orientation"], "rx")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.y, param_xml["pose"]["orientation"], "ry")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.z, param_xml["pose"]["orientation"], "rz")) params_valid =  false;
-
-        // Check if parameter loading was successful
-        // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
-        if(!params_valid)
+        // Try to load parameters
+        try
+        {
+            // Load, validate and assign parameter data
+            user_frame_data.name = Toolbox::Parameter::loadParamData<std::string>(param_xml, "name");
+            user_frame_data.ref_frame = Toolbox::Parameter::loadParamData<std::string>(param_xml, "ref_frame");
+            user_frame_data.pose_rpy.position.x = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "x");
+            user_frame_data.pose_rpy.position.y = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "y");
+            user_frame_data.pose_rpy.position.z = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "z");
+            user_frame_data.pose_rpy.orientation.x = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "rx");
+            user_frame_data.pose_rpy.orientation.y = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "ry");
+            user_frame_data.pose_rpy.orientation.z = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "rz");
+        }
+        // Catch exception(s)
+        catch (const std::exception& e) 
         {
             // Parameter loading failed
             ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to User-Frame [" << user_frame_data.name << "]  is either missing or configured incorrectly");
+                << ": Failed! Parameter(s) related to User-Frame [" << user_frame_data.name << "]" 
+                << " is either missing or configured incorrectly");
+
+            // Exception details
+            std::cerr << e.what() << std::endl;
 
             // Function return
             return boost::none;
-        }
-
+        } 
+        
         // Validate Reference Frame
         if(!validateFrame(user_frame_data.ref_frame))
         {
