@@ -163,13 +163,13 @@ class UserFrameContext
             frame_msgs::UserFrame user_frame_data);
 
 
-        // Print User-Frame
+        // Print User-Frame Data
         // -------------------------------
-        /** \brief Print information on custom user-frame to terminal.
+        /** \brief Print information on custom user-frame data to terminal.
         *
         * Implemented for debugging purposes.
         */
-        void printUserFrame();
+        void printUserFrameData();
 
 
     // Protected Class members

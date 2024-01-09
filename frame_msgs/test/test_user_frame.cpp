@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     //     // UserFrameContext uf_1(nh, "/user_frames/test1");
 
     //     // Debug Print
-    //     uf_1.printUserFrame();
+    //     uf_1.printUserFrameData();
 
     // // User-Frame #2
     // // -------------------------------
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
     //     UserFrameContext uf_2(nh, param_xml);
 
     //     // Debug Print
-    //     uf_2.printUserFrame();
+    //     uf_2.printUserFrameData();
 
     // // User-Frame #3
     // // -------------------------------
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
     //     UserFrameContext uf_3(nh, userFrameMsg);
 
     //     // Debug Print
-    //     uf_3.printUserFrame();
+    //     uf_3.printUserFrameData();
 
 
     

@@ -92,7 +92,7 @@
                 auto userFrameObject = createUserFrameObject(param_vec_[i]);
 
                 // Debug
-                userFrameObject->printUserFrame();
+                userFrameObject->printUserFrameData();
             }
 
         // Report to terminal
@@ -405,7 +405,7 @@
             res.message = CLASS_PREFIX + __FUNCTION__ + ": Successfully created User-Frame [" + req.name + "]";
 
             // Debug
-            userFrameObject->printUserFrame();
+            userFrameObject->printUserFrameData();
 
         // Service validation
         if(!res.success)
@@ -522,7 +522,7 @@
             res.message = CLASS_PREFIX + __FUNCTION__ + ": Successfully updated User-Frame [" + req.name + "]";
 
             // Debug
-            result_user_frame.value()->printUserFrame();
+            result_user_frame.value()->printUserFrameData();
 
         // Service validation
         if(!res.success)

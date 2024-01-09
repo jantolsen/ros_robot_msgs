@@ -113,7 +113,7 @@
     }  // Function End: publishAndBroadcastUserFrame()
 
     
-    // Get User-Frame Message
+    // Get User-Frame Data
     // -------------------------------
     frame_msgs::UserFrame UserFrameContext::getUserFrameData()
     {
@@ -122,7 +122,7 @@
     }  // Function End: getUserFrame()
 
 
-    // Update User-Frame
+    // Update User-Frame Data
     // -------------------------------
     void UserFrameContext::updateUserFrameData(
         frame_msgs::UserFrame user_frame_data)
@@ -132,9 +132,9 @@
     }  // Function End: updateUserFrame()
 
 
-    // Print User-Frame
+    // Print User-Frame data
     // -------------------------------
-    void UserFrameContext::printUserFrame()
+    void UserFrameContext::printUserFrameData()
     {
         // Print information of local user-frame to terminal
         ROS_INFO_STREAM(" ");
@@ -151,7 +151,7 @@
         ROS_INFO_STREAM("       ry: "   << user_frame_data_.pose_rpy.orientation.y << " [deg]");
         ROS_INFO_STREAM("       rz: "   << user_frame_data_.pose_rpy.orientation.z << " [deg]");
         ROS_INFO_STREAM(" ");
-    } // Function End: printUserFrame()
+    } // Function End: printUserFrameData()
     
 
     // Load User-Frame Parameter Data
