@@ -9,14 +9,17 @@
 #           [04.01.2024] - Jan T. Olsen
 # -------------------------------
 
-# Information header
-string name         # Name of user frame
-string ref_frame    # Reference frame for which the custom user frame is relative to
+# User-Frame name
+string name
 
-# Pose RPY
-# (user friendly configuration of pose, typically the custom configuration)
-robot_toolbox/PoseRPY poseRPY
+# Reference frame
+# Frame for which user frame pose is given relative to
+string ref_frame
 
-# Transform Stamped
-# (data type used by tf2 broadcasting, typically calculated from "poseRPY" data)
-geometry_msgs/TransformStamped transformStamped
+# Pose-RPY
+# User-friendly representation of pose, typically used for configuration
+robot_toolbox/PoseRPY pose_rpy
+
+# Transform-Stamped
+# Data type used by tf2 broadcasting, typically calculated from "pose_rpy" data
+geometry_msgs/TransformStamped transform_stamped

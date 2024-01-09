@@ -54,7 +54,6 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   DIRECTORY msg
   FILES
-  dummy.msg
   TargetData.msg
   TargetJoint.msg
   TargetCartesian.msg

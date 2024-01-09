@@ -357,7 +357,7 @@
             }
 
             // Check for empty pose
-            if(Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            if(Toolbox::Kinematics::isPoseEmpty(req.pose_rpy))
             {
                 // Update Service-Response
                 res.success = false;
@@ -391,11 +391,11 @@
             frame_msgs::UserFrame user_frame_data;
             user_frame_data.name = req.name;
             user_frame_data.ref_frame = req.ref_frame;
-            user_frame_data.poseRPY = req.poseRPY;
+            user_frame_data.pose_rpy = req.pose_rpy;
 
             // Assign Transform data of User-Frame
-            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.poseRPY);
-            user_frame_data.transformStamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
+            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.pose_rpy);
+            user_frame_data.transform_stamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
 
             // Create user-frame object
             auto userFrameObject = createUserFrameObject(user_frame_data);
@@ -464,7 +464,7 @@
 
 
             // Check for empty pose
-            if(Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            if(Toolbox::Kinematics::isPoseEmpty(req.pose_rpy))
             {
                 // Update Service-Response
                 res.success = false;
@@ -504,15 +504,15 @@
             }
 
             // Check for empty pose
-            if(!Toolbox::Kinematics::isPoseEmpty(req.poseRPY))
+            if(!Toolbox::Kinematics::isPoseEmpty(req.pose_rpy))
             {
                 // Update pose-rpy of user-frame data
-                user_frame_data.poseRPY = req.poseRPY;
+                user_frame_data.pose_rpy = req.pose_rpy;
             }
 
             // Update Transform data of User-Frame
-            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.poseRPY);
-            user_frame_data.transformStamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
+            geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.pose_rpy);
+            user_frame_data.transform_stamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
 
             // Update user-frame object
             updateUserFrameObject(result_user_frame.value(), user_frame_data);

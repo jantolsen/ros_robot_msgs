@@ -95,10 +95,10 @@
     void UserFrameContext::broadcastUserFrame()
     {
         // Update Transformation time-stamp for the user-frame
-        user_frame_data_.transformStamped.header.stamp = ros::Time::now();
+        user_frame_data_.transform_stamped.header.stamp = ros::Time::now();
 
         // Broadcast the user-frame transformation
-        tf2_broadcaster_.sendTransform(user_frame_data_.transformStamped);
+        tf2_broadcaster_.sendTransform(user_frame_data_.transform_stamped);
     }  // Function End: broadcastUserFrame() 
 
 
@@ -143,13 +143,13 @@
         ROS_INFO_STREAM("Name: "        << user_frame_data_.name);
         ROS_INFO_STREAM("Ref-Frame: "   << user_frame_data_.ref_frame);
         ROS_INFO_STREAM("   Position:");
-        ROS_INFO_STREAM("       x: "    << user_frame_data_.poseRPY.position.x << " [m]");
-        ROS_INFO_STREAM("       y: "    << user_frame_data_.poseRPY.position.y << " [m]");
-        ROS_INFO_STREAM("       z: "    << user_frame_data_.poseRPY.position.z << " [m]");
+        ROS_INFO_STREAM("       x: "    << user_frame_data_.pose_rpy.position.x << " [m]");
+        ROS_INFO_STREAM("       y: "    << user_frame_data_.pose_rpy.position.y << " [m]");
+        ROS_INFO_STREAM("       z: "    << user_frame_data_.pose_rpy.position.z << " [m]");
         ROS_INFO_STREAM("   Orientation:");
-        ROS_INFO_STREAM("       rx: "   << user_frame_data_.poseRPY.orientation.x << " [deg]");
-        ROS_INFO_STREAM("       ry: "   << user_frame_data_.poseRPY.orientation.y << " [deg]");
-        ROS_INFO_STREAM("       rz: "   << user_frame_data_.poseRPY.orientation.z << " [deg]");
+        ROS_INFO_STREAM("       rx: "   << user_frame_data_.pose_rpy.orientation.x << " [deg]");
+        ROS_INFO_STREAM("       ry: "   << user_frame_data_.pose_rpy.orientation.y << " [deg]");
+        ROS_INFO_STREAM("       rz: "   << user_frame_data_.pose_rpy.orientation.z << " [deg]");
         ROS_INFO_STREAM(" ");
     } // Function End: printUserFrame()
     
@@ -209,12 +209,12 @@
         // Load, validate and assign parameter data
         if (!Toolbox::Parameter::loadParamData<std::string>(user_frame_data.name, param_xml, "name")) params_valid =  false;
         if (!Toolbox::Parameter::loadParamData<std::string>(user_frame_data.ref_frame, param_xml, "ref_frame")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.position.x, param_xml["pose"]["position"], "x")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.position.y, param_xml["pose"]["position"], "y")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.position.z, param_xml["pose"]["position"], "z")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.orientation.x, param_xml["pose"]["orientation"], "rx")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.orientation.y, param_xml["pose"]["orientation"], "ry")) params_valid =  false;
-        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.poseRPY.orientation.z, param_xml["pose"]["orientation"], "rz")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["pose"]["position"], "x")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.y, param_xml["pose"]["position"], "y")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.z, param_xml["pose"]["position"], "z")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.x, param_xml["pose"]["orientation"], "rx")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.y, param_xml["pose"]["orientation"], "ry")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.orientation.z, param_xml["pose"]["orientation"], "rz")) params_valid =  false;
 
         // Check if parameter loading was successful
         // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
@@ -241,8 +241,8 @@
         } 
 
         // Assign Transform data of User-Frame
-        geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.poseRPY);
-        user_frame_data.transformStamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
+        geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.pose_rpy);
+        user_frame_data.transform_stamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
 
         // Function return
         return user_frame_data;

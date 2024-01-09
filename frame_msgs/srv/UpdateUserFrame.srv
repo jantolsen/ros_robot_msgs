@@ -10,12 +10,24 @@
 # -------------------------------
 
 # Service-Request
-string name                     # Name of user frame object
-string ref_frame                # Reference frame for which the user frame is relative to
-robot_toolbox/PoseRPY poseRPY   # Pose-RPY (user friendly configuration of pose)
+# -------------------------------
+# User-Frame name
+string name
 
+# Reference frame
+# Frame for which user frame pose is given relative to                  
+string ref_frame
+
+# Pose-RPY
+# User-friendly representation of pose
+robot_toolbox/PoseRPY pose_rpy
 ---
 
 # Service-Response
-bool success                    # Service result Successful/Unsuccessful [true/false]
-string message                  # Service-Message 
+# -------------------------------
+# Service result 
+# Successful/Unsuccessful [true/false]
+bool success       
+
+# Service-Message              
+string message

@@ -8,11 +8,25 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Tool-State data
-std_msgs/Header header              # Header specifying time for joint-state
-string name                         # Name of tool
-string frame                        # Frame of tool
-robot_toolbox/PoseRPY pose          # Pose of tool
-geometry_msgs/Twist velocity        # Velocity of tool
-geometry_msgs/Accel acceleration    # Acceleration of tool
-geometry_msgs/Wrench torque         # Torque of tool
+# Header
+# Specifying time for tool-state
+std_msgs/Header header
+
+# Tool name
+string name
+
+# Frame name
+# Frame for which tool pose is given relative to
+string frame
+
+# Tool Pose
+robot_toolbox/PoseRPY Pose
+
+# Tool Velocity
+geometry_msgs/Twist velocity
+
+# Tool Acceleration
+geometry_msgs/Accel acceleration
+
+# Tool Torque
+geometry_msgs/Wrench torque

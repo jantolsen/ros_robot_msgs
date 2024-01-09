@@ -8,10 +8,21 @@
 #           [19.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Joint-State data
-std_msgs/Header header      # Header specifying time for joint-state
-string[] name               # Name of respective joints
-float64[] position          # Position of respective joints
-float64[] velocity          # Velocity of respective joints
-float64[] acceleration      # Acceleration of respective joints
-float64[] torque            # Torque of respective joints
+# Header
+# Specifying time for joint-state
+std_msgs/Header header
+
+# Names of respective joints
+string[] name       
+
+# Position of respective joints
+float64[] position
+
+# Velocity of respective joints
+float64[] velocity
+
+# Acceleration of respective joints
+float64[] acceleration
+
+# Torque of respective joints
+float64[] torque

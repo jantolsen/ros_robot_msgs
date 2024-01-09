@@ -116,3 +116,31 @@ targets:
     pose:
       position:     [0.000, 0.000, 0.000]
       orientation:  [0.00, 0.00, 0.00]
+
+
+  # ----- Target #X ----- #
+  - name:             point_x
+    type:             CARTESIAN
+    reference_frame:  "world"
+    pose:
+      position:
+        x:    4.0
+        y:    5.0
+        z:    6.0
+      orientation:
+        rx:   0.0
+        ry:   0.0
+        rz:   0.0
+    approach:
+      point_1:
+        direction:
+          x:      1
+          y:      0
+          z:      0
+        distance: 0.100
+      point_1:
+        direction:
+          x:      1
+          y:      0
+          z:      0
+        distance: 0.050
