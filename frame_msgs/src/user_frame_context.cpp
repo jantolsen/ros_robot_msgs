@@ -18,7 +18,7 @@
     // Class Header-File
     #include "frame_msgs/user_frame_context.h"
 
-// User-Frame-Handler Class
+// User-Frame Context Class
 // -------------------------------
 
     // Constants
@@ -37,7 +37,7 @@
     {
         // Initialize publisher(s)
         user_frame_pub_ = nh_.advertise<frame_msgs::UserFrame>("/user_frame/" + user_frame_data_.name, 1);
-    } // Class Constructor End: UserFrameHandler()
+    } // Class Constructor End: UserFrameContext()
 
 
     // Class constructor
@@ -52,7 +52,7 @@
     {
         // This constructor delegates the construction of the UserFrameContext-class to:
         // UserFrameContext(ros::NodeHandler& nh, const frame_msgs::UserFrame& user_frame_data)
-    } // Class Constructor End: UserFrameHandler()
+    } // Class Constructor End: UserFrameContext()
 
     
     // Class constructor
@@ -67,7 +67,7 @@
     {
         // This constructor delegates the construction of the UserFrameContext-class to:
         // UserFrameContext(ros::NodeHandler& nh, const frame_msgs::UserFrame& user_frame_data)
-    } // Class Constructor End: UserFrameHandler()
+    } // Class Constructor End: UserFrameContext()
 
 
     // Class Desctructor

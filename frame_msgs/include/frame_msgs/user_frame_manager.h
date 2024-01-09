@@ -222,7 +222,7 @@ class UserFrameManager
         /** \brief Reads and loads information on custom user-frames from the parameter server.
         *
         * Parameter information for each user-frame is stored in the local collective parameter vector
-        * (user_frame_param_vec_) [std::vector<XmlRpc::XmlRpcValue>].
+        * (param_vec_) [std::vector<XmlRpc::XmlRpcValue>].
         *
         * \param param_name User-Frames parameter name, located on parameter server [std::string]
         * \return Function return: Successful/Unsuccessful (true/false) [bool]

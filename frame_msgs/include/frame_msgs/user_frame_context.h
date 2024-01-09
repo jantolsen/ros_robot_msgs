@@ -67,7 +67,7 @@ class UserFrameContext
         /** \brief User-Frame Context class constuctor
         *
         * \param nh         ROS Nodehandle [ros::Nodehandle]
-        * \param user_frame_data User-Frame [frame_msgs::UserFrame]
+        * \param user_frame_data User-Frame data[frame_msgs::UserFrame]
         */
         UserFrameContext(
             ros::NodeHandle& nh,
@@ -188,7 +188,7 @@ class UserFrameContext
         * Function returns fals if it fails to load user-frame data.
         *
         * \param param_name User-Frame parameter name, located on parameter server [std::string]
-        * \return Function return: Successful: User-Frame [frame_msgs::UserFrame] / Unsuccessful: false [bool]
+        * \return Function return: Successful: User-Frame data [frame_msgs::UserFrame] / Unsuccessful: false [bool]
         */
         boost::optional<frame_msgs::UserFrame> loadParamData(
             const std::string& param_name);
@@ -204,7 +204,7 @@ class UserFrameContext
         * Function returns fals if it fails to load user-frame data.
         *
         * \param param_xml  User-Frame parameters [XmlRpc::XmlRpcValue]
-        * \return Function return: Successful: User-Frame [frame_msgs::UserFrame] / Unsuccessful: false [bool]
+        * \return Function return: Successful: User-Frame data [frame_msgs::UserFrame] / Unsuccessful: false [bool]
         */
         boost::optional<frame_msgs::UserFrame> loadParamData(
             const XmlRpc::XmlRpcValue& param_xml);
