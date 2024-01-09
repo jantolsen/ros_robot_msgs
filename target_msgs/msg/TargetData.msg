@@ -18,13 +18,14 @@ string name
 # Target type
 # Identifier for determining target-type 
 # [JOINT [0], CARTESIAN [1]]
-int32 type              
+int32 type
+string type_name
 
 # Target Joint
-target_msgs/TargetJoint target_joint
+target_msgs/TargetJoint joint
 
 # Target Cartesian
-target_msgs/TargetCartesian target_cartesian
+target_msgs/TargetCartesian cartesian
 
 # Visualize Target
 bool visible

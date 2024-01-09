@@ -37,6 +37,9 @@
     {
         // Initialize publisher(s)
         target_pub_ = nh_.advertise<target_msgs::TargetData>("/target/" + target_data_.name, 1);
+
+        // Initialize Target-Type map
+        initTargetTypeMap();
     } // Class Constructor End: TargetHandler()
 
 
@@ -81,6 +84,74 @@
     } // Class Desctructor End: ~TargetContext()
 
 
+    // Publish Target Data
+    // -------------------------------
+    void TargetContext::publishTarget()
+    {
+        // Publish the target data
+        target_pub_.publish(target_data_);
+    }  // Function End: publishTarget()
+
+
+    // Get Target Data
+    // -------------------------------
+    target_msgs::TargetData TargetContext::getTargetData()
+    {
+        // Return local target data
+        return target_data_;
+    }  // Function End: getTargetData()
+
+
+    // Update Target Data
+    // -------------------------------
+    void TargetContext::updateTargetData(
+        target_msgs::TargetData target_data)
+    {
+        // Update local target data
+        target_data_ = target_data;
+    }  // Function End: updateTargetData()
+
+
+    // Print Target data
+    // -------------------------------
+    void TargetContext::printTargetData()
+    {
+        // Print information on local target data to terminal
+        ROS_INFO_STREAM(" ");
+        ROS_INFO_STREAM("Target:");
+        ROS_INFO_STREAM("--------------------");
+        ROS_INFO_STREAM("Name: " << target_data_.name);
+        ROS_INFO_STREAM("Type: " << target_data_.type_name);
+
+        // Determine target type
+        switch (static_cast<TargetType>(target_data_.type))
+        {
+            // Target type: Joint
+            case TargetType::JOINT:
+                // Print target joint data
+                printTargetJointData();
+
+                // Case break
+                break;
+
+            // Target type: Cartesian
+            case TargetType::CARTESIAN:
+                // Print target cartesian data
+                printTargetCartesianData();
+
+                // Case break
+                break;
+            // Unrecognized target type
+            default:
+                // Target type is not recognized
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Target type [" << target_data_.type << "] is NOT recognized");
+                // Function return
+                return;
+        } // Switch End: target_data_.type
+    } // Function End: printTargetData()
+
+
     // Load Target Parameter Data
     // -------------------------------
     // (Function Overloading)
@@ -95,7 +166,7 @@
         {
             // Failed to get parameter
             ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                <<  ": Failed! Target Parameter [" << param_name << "] not found");
+                <<  ": Failed! Target Parameter [" << param_name << "] is NOT found");
 
             // Function return
             return boost::none;
@@ -124,7 +195,7 @@
         {
             // Parameter is not a struct
             ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Given Target parameter is not a struct");
+                << ": Failed! Given Target parameter is NOT a struct");
 
             // Function return
             return boost::none;
@@ -133,6 +204,180 @@
         // Initialize a flag to track the validation of the parameter loading
         bool params_valid = true;
 
+        // Load, validate and assign parameter data
+        if (!Toolbox::Parameter::loadParamData<std::string>(target_data.name, param_xml, "name")) params_valid =  false;
+        if (!Toolbox::Parameter::loadParamItemKey<std::string>(target_data_.type_name, target_type_map_, param_xml, "type")) params_valid = false;
+        if (!Toolbox::Parameter::loadParamItemValue<int>(target_data.type, target_type_map_, param_xml, "type")) params_valid = false;
+        if (!Toolbox::Parameter::loadParamData<bool>(target_data.visible, param_xml, "visible")) params_valid =  false;
+
+        // Check if parameter loading was successful
+        // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
+        if(!params_valid)
+        {
+            // Parameter loading failed
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Failed! Parameter(s) related to Target [" << target_data.name << "]  is either missing or configured incorrectly");
+
+            // Function return
+            return boost::none;
+        }
+
+        // Determine target type
+        switch (static_cast<TargetType>(target_data.type))
+        {
+            // Target type: Joint
+            case TargetType::JOINT:
+                // Load, validate and assign target-joint parameter data
+                boost::optional<target_msgs::TargetJoint> result_joint_data = loadParamJointData(param_xml["position"]);
+                if(!result_joint_data) return boost::none;
+
+                // Parameter loading was successful
+                target_data.joint = result_joint_data.value();
+
+                // Case break
+                break;
+
+            // Target type: Cartesian
+            case TargetType::CARTESIAN:
+                // Load, validate and assign target-cartesian parameter data
+                boost::optional<target_msgs::TargetCartesian> result_cartesian_data = loadParamCartesianData(param_xml["pose"]);
+                if(!result_cartesian_data) return boost::none;
+
+                // Parameter loading was successful
+                target_data.cartesian = result_cartesian_data.value();
+
+                // Case break
+                break;
+
+            // Unrecognized target type
+            default:
+                // Target type is not recognized
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Target type [" << target_data.type << "] is NOT recognized");
+                // Function return
+                return boost::none;
+        } // Switch End: target_data.type
+
         // Function return
         return target_data;
     } // Function End: loadParamData()
+
+
+    // Load Target Joint Data
+    // -------------------------------
+    boost::optional<target_msgs::TargetJoint> loadParamJointData(
+        const XmlRpc::XmlRpcValue& param_xml)
+    {
+        // Define local variable(s)
+        target_msgs::TargetJoint target_joint_data;
+        
+        // Evaluate parameter(s) type
+        switch (param_xml.getType())
+        {
+            // Array: 
+            // Target-Joint data is configured as an array
+            case XmlRpc::XmlRpcValue::TypeArray:
+                // Resize target joint data to match the number of joints
+                target_joint_data.position_deg.resize(param_xml.size());
+
+                // Iterate through all joints
+                for (size_t i = 0; i < param_xml.size(); i++)
+                {
+                    // Load, validate and assign parameter data
+                    if (!Toolbox::Parameter::loadParamData<double>(target_joint_data.position_deg[i], param_xml, i)) return boost::none;
+                }
+
+                // Case break
+                break;
+
+            // Struct: 
+            // Target-Joint data is configured as a struct
+            case XmlRpc::XmlRpcValue::TypeStruct:
+                // Resize target joint data to match the number of joints
+                target_joint_data.position_deg.resize(param_xml.size());
+
+                if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["position"], "q0")) params_valid =  false;
+
+
+
+        } // Switch End: param_xml.getType()
+
+
+        // Check if given parameter is a array-type
+        if(Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
+        {
+            // Parameter is not a array
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Failed! Given Target-Joint parameter is NOT an array");
+
+            // Function return
+            return boost::none;
+        }
+
+        // Initialize a flag to track the validation of the parameter loading
+        bool params_valid = true;
+
+        // Load, validate and assign parameter data
+        if (!Toolbox::Parameter::loadParamData<std::vector<double>>(target_joint_data.position_deg, param_xml, "position_deg")) params_valid =  false;
+
+    } // Function End: loadParamJointData()
+
+
+    // Load Target Cartesian Data
+    // -------------------------------
+    boost::optional<target_msgs::TargetCartesian> loadParamCartesianData(
+        const XmlRpc::XmlRpcValue& param_xml)
+    {
+            
+    } // Function End: loadParamCartesianData()
+
+
+    // Print Target Joint Data
+    // -------------------------------
+    void TargetContext::printTargetJointData()
+    {
+        // Print information of local target joint data to terminal
+        
+        ROS_INFO_STREAM("Joint Target:");
+        ROS_INFO_STREAM("   Position:");
+        // Iterate through all joint positions
+        for (size_t i = 0; i < target_data_.joint.position_deg.size(); i++)
+        {
+            // Print joint position for each joint
+            ROS_INFO_STREAM("       q[" << i+1 << "]: " << target_data_.joint.position_deg[i] << " [deg]");
+        }
+        ROS_INFO_STREAM(" ");
+    } // Function End: printTargetJointData()
+
+
+    // Print Target Cartesian Data
+    // -------------------------------
+    void TargetContext::printTargetCartesianData()
+    {
+        // Print information of local target cartesian data to terminal
+        ROS_INFO_STREAM("Cartesian Target:");
+        ROS_INFO_STREAM("   Reference-Frame: "  << target_data_.cartesian.ref_frame);
+        ROS_INFO_STREAM("   Position:");
+        ROS_INFO_STREAM("       x: "    << target_data_.cartesian.pose_rpy.position.x << " [m]");
+        ROS_INFO_STREAM("       y: "    << target_data_.cartesian.pose_rpy.position.y << " [m]");
+        ROS_INFO_STREAM("       z: "    << target_data_.cartesian.pose_rpy.position.z << " [m]");
+        ROS_INFO_STREAM("   Orientation:");
+        ROS_INFO_STREAM("       rx: "   << target_data_.cartesian.pose_rpy.orientation.x << " [deg]");
+        ROS_INFO_STREAM("       ry: "   << target_data_.cartesian.pose_rpy.orientation.y << " [deg]");
+        ROS_INFO_STREAM("       rz: "   << target_data_.cartesian.pose_rpy.orientation.z << " [deg]");
+        ROS_INFO_STREAM(" ");
+    } // Function End: printTargetCartesianData()
+
+
+    // Initialize Target Type Map
+    // -------------------------------
+    void TargetContext::initTargetTypeMap()
+    {
+        // Initialize and populate map
+        target_type_map_ =
+        {
+            {"JOINT",       TargetType::JOINT},
+            {"CARTESIAN",   TargetType::CARTESIAN}
+        };
+    } // Function End: initTargetTypeMap()
+
