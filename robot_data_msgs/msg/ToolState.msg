@@ -20,7 +20,7 @@ string name
 string frame
 
 # Tool Pose
-robot_toolbox/PoseRPY Pose
+robot_toolbox/PoseRPY pose
 
 # Tool Velocity
 geometry_msgs/Twist velocity
