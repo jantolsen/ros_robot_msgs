@@ -139,22 +139,23 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/info_msgs.cpp
-# )
+# Declare a C++ library
+add_library(${PROJECT_NAME}
+  src/target_context.cpp
+  src/target_manager.cpp
+)
 
-# # Specify libraries to link a library or executable target against
-# target_link_libraries(
-#   ${PROJECT_NAME}
-#   ${catkin_LIBRARIES}
-# )
+# Specify libraries to link a library or executable target against
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 # Add cmake target dependencies of the library
 # as an example, code may need to be generated before libraries
 # either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-# add_dependencies(target_msgs target_msgs_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(target_msgs target_msgs_generate_messages_cpp)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -181,7 +182,7 @@ add_executable(test_target
 
 target_link_libraries(test_target
   ${catkin_LIBRARIES}
-  # ${PROJECT_NAME}
+  ${PROJECT_NAME}
 )
 
 #############
@@ -208,7 +209,7 @@ target_link_libraries(test_target
 # See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
 install(
   TARGETS 
-    # ${PROJECT_NAME}
+    ${PROJECT_NAME}
   ARCHIVE DESTINATION 
     ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION 
