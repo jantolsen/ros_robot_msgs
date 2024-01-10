@@ -18,8 +18,12 @@
     // Class Header-File
     #include "frame_msgs/user_frame_context.h"
 
-// User-Frame Context Class
+// Namespace: Frame
 // -------------------------------
+namespace Frame
+{
+    // User-Frame Context Class Member(s)
+    // -------------------------------
 
     // Constants
     // -------------------------------
@@ -283,3 +287,5 @@
             return false;
         }
     } // Function End: validateFrame()
+
+} // End Namespace: Frame

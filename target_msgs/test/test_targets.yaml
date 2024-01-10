@@ -66,9 +66,10 @@
 # ----- Target List ----- #
 targets:
   # ----- Target #1 ----- #
-  - name:       point_a
+  - name:       test1
     type:       CARTESIAN
     ref_frame:  "world"
+    visible:    true
     pose:
       position:
         x:  1.0
@@ -80,22 +81,9 @@ targets:
         rz: 0.0
 
   # ----- Target #2 ----- #
-  - name:       point_b
-    type:       CARTESIAN
-    ref_frame:  "world"
-    pose:
-      position:
-        x:  4.0
-        y:  5.0
-        z:  6.0
-      orientation:
-        rx: 0.0
-        ry: 0.0
-        rz: 0.0
-
-  # ----- Target #3 ----- #
-  - name:   point_c
+  - name:   test3
     type:   JOINT
+    visible:    true
     position:
       q1:   0.0
       q2:   0.0
@@ -104,43 +92,66 @@ targets:
       q5:   0.0
       q6:   0.0
 
-  # ----- Target #4 ----- #
-  - name:   point_c
+  # ----- Target #3 ----- #
+  - name:   test3
     type:   JOINT
+    visible:    true
     position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-  # ----- Target #2 ----- #
-  - name:       point_b
+  # ----- Target #4 ----- #
+  - name:       test4
     type:       CARTESIAN
     ref_frame:  "world"
+    visible:    true
     pose:
       position:     [0.000, 0.000, 0.000]
       orientation:  [0.00, 0.00, 0.00]
 
 
-  # ----- Target #X ----- #
-  - name:             point_x
-    type:             CARTESIAN
-    reference_frame:  "world"
+# ----- Custom User Frames SINGLE ENTRY ----- #
+targets_test:
+  # ----- Test Target 1 ----- #
+  test1:
+    name:       test1
+    type:       ASD
+    ref_frame:  "world"
+    visible:    true
     pose:
       position:
-        x:    4.0
-        y:    5.0
-        z:    6.0
+        x:  1.0
+        y:  2.0
+        z:  3.0
       orientation:
-        rx:   0.0
-        ry:   0.0
-        rz:   0.0
-    approach:
-      point_1:
-        direction:
-          x:      1
-          y:      0
-          z:      0
-        distance: 0.100
-      point_1:
-        direction:
-          x:      1
-          y:      0
-          z:      0
-        distance: 0.050
+        rx: 0.0
+        ry: 0.0
+        rz: 0.0
+
+  # ----- Test Target 2 ----- #
+  test2:
+    name:   test2
+    type:   JOINT
+    visible:    true
+    position:
+      q1:   0.0
+      q2:   0.0
+      q3:   0.0
+      q4:   0.0
+      q5:   0.0
+      q6:   0.0
+
+  # ----- Test Target 3 ----- #
+  test3:
+    name:   test3
+    type:   JOINT
+    visible:    true
+    position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+  # ----- Test Target 4 ----- #
+  test4:
+    name:       test4
+    type:       CARTESIAN
+    ref_frame:  "world"
+    visible:    true
+    pose:
+      position:     [0.000, 0.000, 0.000]
+      orientation:  [0.00, 0.00, 0.00]

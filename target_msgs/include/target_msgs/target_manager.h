@@ -55,93 +55,97 @@
     // Target Context
     #include "target_msgs/target_context.h"
 
-
-// Target Manager Class
+// Namespace: Target
 // -------------------------------
-/** \brief Robot system target handler
-* Collects, sorts and structures information on custom defined targets 
-* obtained from the parameter server. The manager utilizes the 
-* Target-Context class to store information as a target-message type 
-* for each defined target. Provides functionality for accessing, and publishing 
-* information on each target present in the system.
-*/
-class TargetManager
+namespace Target
 {
-    // Public Class members
+    // Target Manager Class
     // -------------------------------
-    // Accessible for everyone
-    public:
-
-        // Class constructor
+    /** \brief Robot system target handler
+    * Collects, sorts and structures information on custom defined targets 
+    * obtained from the parameter server. The manager utilizes the 
+    * Target-Context class to store information as a target-message type 
+    * for each defined target. Provides functionality for accessing, and publishing 
+    * information on each target present in the system.
+    */
+    class TargetManager
+    {
+        // Public Class members
         // -------------------------------
-        /** \brief Target Manager class constuctor
-        *
-        * \param nh         ROS Nodehandle [ros::Nodehandle]
-        * \param param_name Parameter name for collective targets, located on parameter server [std::string]
-        */
-        TargetManager(
-            ros::NodeHandle& nh,
-            const std::string& param_name);
+        // Accessible for everyone
+        public:
+
+            // Class constructor
+            // -------------------------------
+            /** \brief Target Manager class constuctor
+            *
+            * \param nh         ROS Nodehandle [ros::Nodehandle]
+            * \param param_name Parameter name for collective targets, located on parameter server [std::string]
+            */
+            TargetManager(
+                ros::NodeHandle& nh,
+                const std::string& param_name);
 
 
-        // Class destructor
+            // Class destructor
+            // -------------------------------
+            /** \brief Target Manager class destructor
+            */
+            ~TargetManager();
+
+
+        // Protected Class members
         // -------------------------------
-        /** \brief Target Manager class destructor
-        */
-        ~TargetManager();
+        // Accessible within the class which defines them, 
+        // and classes which inherits from the parent class
+        protected:
+
+            // Initialize Target Manager
+            // -------------------------------
+            /** \brief Initialize Target Manager
+            */
+            void init();
 
 
-    // Protected Class members
-    // -------------------------------
-    // Accessible within the class which defines them, 
-    // and classes which inherits from the parent class
-    protected:
+            // Load Targets Parameter Data
+            // -------------------------------
+            // (Function Overloading)
+            /** \brief Reads and loads information on custom targets from the parameter server.
+            *
+            * Parameter information for each target is stored in the local collective parameter vector
+            * (param_vec_) [std::vector<XmlRpc::XmlRpcValue>].
+            *
+            * \param param_name Targets parameter name, located on parameter server [std::string]
+            * \return Function return: Successful/Unsuccessful (true/false) [bool]
+            */
+            bool loadParamData(
+                const std::string& param_name);
 
-        // Initialize Target Manager
+
+        // Private Class members
         // -------------------------------
-        /** \brief Initialize Target Manager
-        */
-        void init();
+        // Accessible only for the class which defines them
+        private:
+            // Class-Name-Prefix for terminal message
+            static const std::string CLASS_PREFIX;
 
+            // Local class member(s)
+            // -------------------------------
+            XmlRpc::XmlRpcValue param_name_;
+            std::vector<XmlRpc::XmlRpcValue> param_vec_;
+            std::map<std::string, std::shared_ptr<TargetContext>> target_map_;
+            std::vector<std::shared_ptr<TargetContext>> target_vec_;
 
-        // Load Targets Parameter Data
-        // -------------------------------
-        // (Function Overloading)
-        /** \brief Reads and loads information on custom targets from the parameter server.
-        *
-        * Parameter information for each target is stored in the local collective parameter vector
-        * (param_vec_) [std::vector<XmlRpc::XmlRpcValue>].
-        *
-        * \param param_name Targets parameter name, located on parameter server [std::string]
-        * \return Function return: Successful/Unsuccessful (true/false) [bool]
-        */
-        bool loadParamData(
-            const std::string& param_name);
+            // ROS Nodehandle(s)
+            // -------------------------------
+            ros::NodeHandle nh_;
 
+            // ROS Service Server(s)
+            // -------------------------------
+            // (Declaring Service-Servers as shared-pointers to allow shared ownership of the objects)
+            std::shared_ptr<ros::ServiceServer> createTargetObject_server_;  // ROS Server for creating a Target object
+            std::shared_ptr<ros::ServiceServer> updateTargetObject_server_;  // ROS Server for updating Target object
 
-    // Private Class members
-    // -------------------------------
-    // Accessible only for the class which defines them
-    private:
-        // Class-Name-Prefix for terminal message
-        static const std::string CLASS_PREFIX;
-
-        // Local class member(s)
-        // -------------------------------
-        XmlRpc::XmlRpcValue param_name_;
-        std::vector<XmlRpc::XmlRpcValue> param_vec_;
-        std::map<std::string, std::shared_ptr<TargetContext>> target_map_;
-        std::vector<std::shared_ptr<TargetContext>> target_vec_;
-
-        // ROS Nodehandle(s)
-        // -------------------------------
-        ros::NodeHandle nh_;
-
-        // ROS Service Server(s)
-        // -------------------------------
-        // (Declaring Service-Servers as shared-pointers to allow shared ownership of the objects)
-        std::shared_ptr<ros::ServiceServer> createTargetObject_server_;  // ROS Server for creating a Target object
-        std::shared_ptr<ros::ServiceServer> updateTargetObject_server_;  // ROS Server for updating Target object
-
-}; // End Class: TargetManager
+    }; // End Class: TargetManager
+} // End Namespace: Target
 #endif // TARGET_MANAGER_H 

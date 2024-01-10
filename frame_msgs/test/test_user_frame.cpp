@@ -55,68 +55,67 @@ int main(int argc, char** argv)
     // User-Frame Manager
     // -------------------------------
         // Define and initialize User-Frame Manager
-        UserFrameManager userFrameManager(nh, "/user_frames");
+        // Frame::UserFrameManager userFrameManager(nh, "/user_frames");
 
 
-    // // User-Frame #1
-    // // -------------------------------
-    //     // Define and initialize User-Frame-Handler
-    //     param_name = "/user_frames/test1";
-    //     UserFrameContext uf_1(nh, param_name);
-    //     // UserFrameContext uf_1(nh, "/user_frames/test1");
+    // User-Frame #1
+    // -------------------------------
+        // Define and initialize User-Frame-Handler
+        param_name = "/user_frames_test/test1";
+        Frame::UserFrameContext uf_1(nh, param_name);
 
-    //     // Debug Print
-    //     uf_1.printUserFrameData();
+        // Debug Print
+        uf_1.printUserFrameData();
 
-    // // User-Frame #2
-    // // -------------------------------
-    //     // Define and initialize User-Frame-Handler
-    //     param_name = "/user_frames/test2";
+    // User-Frame #2
+    // -------------------------------
+        // Define and initialize User-Frame-Handler
+        param_name = "/user_frames_test/test2";
         
-    //     // Check parameter server for Information-Kinematics parameters
-    //     if(!ros::param::get(param_name, param_xml))
-    //     {
-    //         // Failed to get parameter
-    //         ROS_ERROR_STREAM("Failed! User-Frames Parameter [" << param_name << "] not found");
+        // Check parameter server for Information-Kinematics parameters
+        if(!ros::param::get(param_name, param_xml))
+        {
+            // Failed to get parameter
+            ROS_ERROR_STREAM("Failed! User-Frames Parameter [" << param_name << "] not found");
 
-    //         // Function return
-    //         return false;
-    //     }
+            // Function return
+            return false;
+        }
 
-    //     UserFrameContext uf_2(nh, param_xml);
+        Frame::UserFrameContext uf_2(nh, param_xml);
 
-    //     // Debug Print
-    //     uf_2.printUserFrameData();
+        // Debug Print
+        uf_2.printUserFrameData();
 
-    // // User-Frame #3
-    // // -------------------------------
-    //     // Define User-Frame Msgs
-    //     robot_toolbox::UserFrame userFrameMsg;
+    // User-Frame #3
+    // -------------------------------
+        // Define User-Frame Msgs
+        frame_msgs::UserFrame userFrameMsg;
 
-    //     // Assign parameters
-    //     userFrameMsg.name = "test3";
-    //     userFrameMsg.ref_frame = "world";
-    //     userFrameMsg.poseRPY.position.x = -1.0;
-    //     userFrameMsg.poseRPY.position.y = 5.8;
-    //     userFrameMsg.poseRPY.position.z = 2.3;
-    //     userFrameMsg.poseRPY.orientation.x = -4.3;
-    //     userFrameMsg.poseRPY.orientation.y = 8.0;
-    //     userFrameMsg.poseRPY.orientation.z = 3.14;
+        // Assign parameters
+        userFrameMsg.name = "test3";
+        userFrameMsg.ref_frame = "world";
+        userFrameMsg.pose_rpy.position.x = -1.0;
+        userFrameMsg.pose_rpy.position.y = 5.8;
+        userFrameMsg.pose_rpy.position.z = 2.3;
+        userFrameMsg.pose_rpy.orientation.x = -4.3;
+        userFrameMsg.pose_rpy.orientation.y = 8.0;
+        userFrameMsg.pose_rpy.orientation.z = 3.14;
 
-    //     // Assign Transform data of User-Frame
-    //     geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(userFrameMsg.poseRPY);
-    //     userFrameMsg.transformStamped = Toolbox::Convert::poseToTransform(pose, userFrameMsg.ref_frame, userFrameMsg.name);
+        // Assign Transform data of User-Frame
+        geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(userFrameMsg.pose_rpy);
+        userFrameMsg.transform_stamped = Toolbox::Convert::poseToTransform(pose, userFrameMsg.ref_frame, userFrameMsg.name);
 
-    //     // Define and initialize User-Frame-Handler
-    //     UserFrameContext uf_3(nh, userFrameMsg);
+        // Define and initialize User-Frame-Handler
+        Frame::UserFrameContext uf_3(nh, userFrameMsg);
 
-    //     // Debug Print
-    //     uf_3.printUserFrameData();
+        // Debug Print
+        uf_3.printUserFrameData();
 
 
-    
+    // Main Loop
+    // -------------------------------
     ros::Rate rate(10.0);
-    // Run testFunc in a loop
     while (ros::ok()) 
     {
         // // Publish User-Frame
@@ -129,7 +128,7 @@ int main(int argc, char** argv)
         // uf_2.broadcastUserFrame();
         // uf_3.broadcastUserFrame();
 
-        userFrameManager.publishAndBroadcastUserFrames();
+        // userFrameManager.publishAndBroadcastUserFrames();
 
         ros::spinOnce(); // Handle ROS callbacks
     }

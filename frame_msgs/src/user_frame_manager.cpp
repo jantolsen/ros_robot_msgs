@@ -20,8 +20,12 @@
     // Class Header-File
     #include "frame_msgs/user_frame_manager.h"
 
-// User-Frame-Manager Class
+// Namespace: Frame
 // -------------------------------
+namespace Frame
+{
+    // User-Frame-Manager Class
+    // -------------------------------
 
     // Constants
     // -------------------------------
@@ -540,3 +544,5 @@
         // Function return
         return true;
     } // Function End: updateUserFrameObjectCB() 
+    
+} // End Namespace: Frame
