@@ -113,9 +113,10 @@ targets_test:
   # ----- Test Target 1 ----- #
   test1:
     name:       test1
-    type:       ASD
+    type:       carTesIAN
     ref_frame:  "world"
     visible:    true
+    test_vec: [1.0,2.0,3.3,4.4,5.5]
     pose:
       position:
         x:  1.0
@@ -128,8 +129,9 @@ targets_test:
 
   # ----- Test Target 2 ----- #
   test2:
-    name:   test2
+    name:   test222
     type:   JOINT
+    test_vec: [1.0,2.0,3.3,4.4,5.5]
     visible:    true
     position:
       q1:   0.0

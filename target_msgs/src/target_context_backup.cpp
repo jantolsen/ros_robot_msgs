@@ -29,6 +29,24 @@ namespace Target
     // -------------------------------
     const std::string TargetContext::CLASS_PREFIX = "TargetContext::";
 
+    // // Class constructor
+    // // -------------------------------
+    // // (Constructor Overloading)
+    // TargetContext::TargetContext(
+    //     ros::NodeHandle& nh)
+    // :
+    //     nh_(nh),
+    //     target_data_(target_data),
+    //     target_type_map_(initTargetTypeMap())
+    // {
+    //     // Initialize target-context
+    //     // init(target_data);
+
+    //     // Initialize publisher(s)
+    //     target_pub_ = nh_.advertise<target_msgs::TargetData>("/target/" + target_data_.name, 1);
+
+    // } // Class Constructor End: TargetHandler()
+
 
     // Class constructor
     // -------------------------------
@@ -38,14 +56,14 @@ namespace Target
         const target_msgs::TargetData& target_data)
     :
         nh_(nh),
-        target_data_(target_data)
+        target_data_(target_data),
+        target_type_map_(initTargetTypeMap())
     {
+        // Initialize target-context
+        // init(target_data);
+
         // Initialize publisher(s)
         target_pub_ = nh_.advertise<target_msgs::TargetData>("/target/" + target_data_.name, 1);
-
-        // Initialize target-context
-        target_type_map_ = initTargetTypeMap();
-        target_type_names_vec_ = initTargetTypeNames(target_type_map_);
 
     } // Class Constructor End: TargetHandler()
 
@@ -59,8 +77,8 @@ namespace Target
     :
         TargetContext(nh, loadParamData(param_name).value())
     {
-        // This constructor delegates the construction of the TargetContext-class to:
-        // TargetContext(ros::NodeHandler& nh, const target_msgs::TargetData& target_data)
+        // Initialize target-context
+        // init(param_name);
     } // Class Constructor End: TargetHandler()
 
 
@@ -73,8 +91,8 @@ namespace Target
     :
         TargetContext(nh, loadParamData(param_xml).value())
     {
-        // This constructor delegates the construction of the UserFrameContext-class to:
-        // TargetContext(ros::NodeHandler& nh, const target_msgs::TargetData& target_data)
+        // Initialize target-context
+        // init(param_xml);
     } // Class Constructor End: TargetHandler()
 
 
@@ -157,6 +175,72 @@ namespace Target
     } // Function End: printTargetData()
     
 
+    // Initialize Target Context
+    // -------------------------------
+    // (Function Overloading)
+    void TargetContext::init(const target_msgs::TargetData& target_data)
+    {
+        // Initialize local target-type map
+        target_type_map_ = initTargetTypeMap();
+
+        // Initialize local target data
+        target_data_ = target_data;
+
+        // Initialize publisher(s)
+        target_pub_ = nh_.advertise<target_msgs::TargetData>("/target/" + target_data_.name, 1);
+    } // Function End: init()
+
+
+    // Initialize Target Context
+    // -------------------------------
+    // (Function Overloading)
+    void TargetContext::init(const std::string& param_name)
+    {
+        // Initialize Target-Type map
+        target_type_map_ = initTargetTypeMap();
+
+        // Load target parameter data
+        auto result_data = loadParamData(param_name);
+        if(!result_data)
+        {
+            // Report to terminal
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Initialization failed!");
+
+            // Function return
+            return;
+        }
+
+        // Calling overloaded function
+        return init(result_data.value());
+    } // Function End: init()
+
+
+    // Initialize Target Context
+    // -------------------------------
+    // (Function Overloading)
+    void TargetContext::init(const XmlRpc::XmlRpcValue& param_xml)
+    {
+        // Initialize Target-Type map
+        target_type_map_ = initTargetTypeMap();
+
+        // Load target parameter data
+        auto result_data = loadParamData(param_xml);
+        if(!result_data)
+        {
+            // Report to terminal
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Initialization failed!");
+
+            // Function return
+            return;
+        }
+
+        // Calling overloaded function
+        return init(result_data.value());
+    } // Function End: init()
+
+
     // Load Target Parameter Data
     // -------------------------------
     // (Function Overloading)
@@ -176,7 +260,7 @@ namespace Target
             // Function return
             return boost::none;
         }
-        // Function return
+        // Function return: Call overloading function
         return loadParamData(param_xml);
     } // Function End: loadParamData() 
 
@@ -194,8 +278,9 @@ namespace Target
         
         // Define local variable(s)
         target_msgs::TargetData target_data;
-        std::map<std::string, TargetType> target_type_map = initTargetTypeMap();
-        std::vector<std::string> target_type_names =  initTargetTypeNames(target_type_map);
+
+        // Define and initialize target-type map
+        std::map<std::string, TargetType> target_type_map;
 
         // Check if given parameter is a struct-type
         if(!Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
@@ -212,14 +297,10 @@ namespace Target
         try
         {
             // Load, validate and assign parameter data
-            // target_data.name = Toolbox::ParameterLoader<std::string>::getParamData(param_xml, "name");
-            // target_data.type_name = Toolbox::ParameterLoader<std::string>::getParamData(target_type_map, param_xml, "type");
-            // target_data.type = Toolbox::Parameter::loadParamItemValue<int>(target_type_map, param_xml, "type");
-            // target_data.visible = Toolbox::ParameterLoader<bool>::getParamData(param_xml, "visible");
-
-            target_data.name = Toolbox::ParameterTest::loadParamData<std::string>(param_xml, "name");
-            target_data.type_name = Toolbox::ParameterTest::loadParamData<std::string>(param_xml, "type", target_type_names);
-            std::vector<double> target_type_names_vec = Toolbox::ParameterTest::loadParamData<std::vector<double>>(param_xml, "test_vec");
+            target_data.name = Toolbox::Parameter::loadParamData<std::string>(param_xml, "name");
+            target_data.type_name = Toolbox::Parameter::loadParamItemKey<std::string>(target_type_map, param_xml, "type");
+            target_data.type = Toolbox::Parameter::loadParamItemValue<int>(target_type_map, param_xml, "type");
+            target_data.visible = Toolbox::Parameter::loadParamData<bool>(param_xml, "visible");
         }
         // Catch Exception(s)
         catch (const std::exception& e) 
@@ -230,15 +311,132 @@ namespace Target
                 << " is either missing or configured incorrectly");
 
             // Exception details
-            std::cerr << e.what() << std::endl;
+            // std::cerr << e.what() << std::endl;
 
             // Function return
             return boost::none;
         } 
+        
+        // // Determine target type
+        // switch (static_cast<TargetType>(target_data.type))
+        // {
+        //     // Target type: Joint
+        //     case TargetType::JOINT:
+        //         // Load, validate and assign target-joint parameter data
+        //         // boost::optional<target_msgs::TargetJoint> result_joint_data = loadParamJointData(param_xml["position"]);
+        //         // if(!result_joint_data) return boost::none;
+
+        //         // // Parameter loading was successful
+        //         // target_data.joint = result_joint_data.value();
+
+        //         // Case break
+        //         break;
+
+        //     // Target type: Cartesian
+        //     case TargetType::CARTESIAN:
+        //         // Load, validate and assign target-cartesian parameter data
+        //         // boost::optional<target_msgs::TargetCartesian> result_cartesian_data = loadParamCartesianData(param_xml["pose"]);
+        //         // if(!result_cartesian_data) return boost::none;
+
+        //         // // Parameter loading was successful
+        //         // target_data.cartesian = result_cartesian_data.value();
+
+        //         // Case break
+        //         break;
+
+        //     // Unrecognized target type
+        //     default:
+        //         // Target type is not recognized
+        //         ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+        //             << ": Failed! Target type [" << target_data.type << "] is NOT recognized");
+        //         // Function return
+        //         return boost::none;
+        // } // Switch End: target_data.type
 
         // Function return
         return target_data;
     } // Function End: loadParamData()
+
+
+    // Load Target Joint Data
+    // -------------------------------
+    boost::optional<target_msgs::TargetJoint> TargetContext::loadParamJointData(
+        const XmlRpc::XmlRpcValue& param_xml)
+    {
+        // Define local variable(s)
+        target_msgs::TargetJoint target_joint_data;
+        
+        // // Evaluate parameter(s) type
+        // switch (param_xml.getType())
+        // {
+        //     // Array: 
+        //     // Target-Joint data is configured as an array
+        //     case XmlRpc::XmlRpcValue::TypeArray:
+        //         // // Resize target joint data to match the number of joints
+        //         // target_joint_data.position_deg.resize(param_xml.size());
+
+        //         // // Load, validate and assign parameter data
+        //         // if (!Toolbox::Parameter::loadParamData<std:.vector<double>>(target_joint_data.position_deg[i], param_xml, "position")) params_valid =  false;
+
+        //         // // Iterate through all joints   
+        //         // for (size_t i = 0; i < param_xml.size(); i++)
+        //         // {
+        //         //     // Load, validate and assign parameter data
+        //         //     if (!Toolbox::Parameter::loadParamData<std:.vector<double>>(target_joint_data.position_deg[i], param_xml, "position")) params_valid =  false;
+        //         // }
+
+        //         // Case break
+        //         break;
+
+        //     // Struct: 
+        //     // Target-Joint data is configured as a struct
+        //     case XmlRpc::XmlRpcValue::TypeStruct:
+        //         // // Resize target joint data to match the number of joints
+        //         // target_joint_data.position_deg.resize(param_xml.size());
+
+        //         // if (!Toolbox::Parameter::loadParamData<double>(user_frame_data.pose_rpy.position.x, param_xml["position"], "q0")) params_valid =  false;
+
+        //         // Case break
+        //         break;
+
+        //     // Unrecognized target type
+        //     default:
+        //         // Target type is not recognized
+        //         ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+        //             << ": Failed! Target type is NOT recognized");
+        //         // Function return
+        //         return boost::none;
+
+        // } // Switch End: param_xml.getType()
+
+
+        // // Check if given parameter is a array-type
+        // if(Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
+        // {
+        //     // Parameter is not a array
+        //     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+        //         << ": Failed! Given Target-Joint parameter is NOT an array");
+
+        //     // Function return
+        //     return boost::none;
+        // }
+
+        // // Initialize a flag to track the validation of the parameter loading
+        // bool params_valid = true;
+
+        // Load, validate and assign parameter data
+        // if (!Toolbox::Parameter::loadParamData<std::vector<double>>(target_joint_data.position_deg, param_xml, "position_deg")) params_valid =  false;
+        return boost::none;
+    } // Function End: loadParamJointData()
+
+
+    // Load Target Cartesian Data
+    // -------------------------------
+    boost::optional<target_msgs::TargetCartesian> TargetContext::loadParamCartesianData(
+        const XmlRpc::XmlRpcValue& param_xml)
+    {
+        return boost::none;
+    } // Function End: loadParamCartesianData()
 
 
     // Print Target Joint Data
@@ -293,23 +491,4 @@ namespace Target
         return target_type_map;
     } // Function End: initTargetTypeMap()
 
-
-    // Initialize Target Type Names
-    // -------------------------------
-    std::vector<std::string> TargetContext::initTargetTypeNames(
-        std::map<std::string, TargetType> target_type_map)
-    {
-        // Initialize vector
-        std::vector<std::string> target_type_names_vec;
-
-        // Iterate through target-type map
-        for (auto& target_type : target_type_map)
-        {
-            // Append target-type name found within target-type map
-            target_type_names_vec.push_back(target_type.first);
-        }
-        // Function return
-        return target_type_names_vec;    
-    } // Function End: initTargetTypeNames()
-    
 } // End Namespace: Target

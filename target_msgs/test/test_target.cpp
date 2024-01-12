@@ -70,25 +70,32 @@ int main(int argc, char** argv)
         // Debug Print
         target_1.printTargetData();
 
-    // // Target #2
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test2";
+    // Target #2
+    // -------------------------------
+        // Define and initialize Target-Handler
+        param_name = "/targets_test/test2";
         
-    //     // Check parameter server for Information-Kinematics parameters
-    //     if(!ros::param::get(param_name, param_xml))
-    //     {
-    //         // Failed to get parameter
-    //         ROS_ERROR_STREAM("Failed! User-Frames Parameter [" << param_name << "] not found");
+        // Check parameter server for Information-Kinematics parameters
+        if(!ros::param::get(param_name, param_xml))
+        {
+            // Failed to get parameter
+            ROS_ERROR_STREAM("Failed! User-Frames Parameter [" << param_name << "] not found");
 
-    //         // Function return
-    //         return false;
-    //     }
+            // Function return
+            return false;
+        }
 
-    //     Target::TargetContext target_2(nh, param_xml);
+        auto test = param_xml["asd"];
 
-    //     // Debug Print
-    //     target_2.printTargetData();
+        
+
+        ROS_INFO_STREAM("Test: " << test);
+        ROS_INFO_STREAM("Test teype: " << test.getType());
+
+        Target::TargetContext target_2(nh, param_xml);
+
+        // Debug Print
+        target_2.printTargetData();
 
     // Target #5
     // -------------------------------
