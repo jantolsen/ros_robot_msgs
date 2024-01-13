@@ -115,7 +115,6 @@ targets_test:
     name:       test1
     type:       carTesIAN
     ref_frame:  "world"
-    visible:    true
     test_vec: [1.0,2.0,3.3,4.4,5.5]
     pose:
       position:
@@ -129,9 +128,16 @@ targets_test:
 
   # ----- Test Target 2 ----- #
   test2:
-    name:   test222
+    name:       test2
+    type:       JOINT
+    visible:    true
+    ext_axis:   true
+    position: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
+
+  # ----- Test Target 3 ----- #
+  test3:
+    name:   test3
     type:   JOINT
-    test_vec: [1.0,2.0,3.3,4.4,5.5]
     visible:    true
     position:
       q1:   0.0
@@ -140,13 +146,6 @@ targets_test:
       q4:   0.0
       q5:   0.0
       q6:   0.0
-
-  # ----- Test Target 3 ----- #
-  test3:
-    name:   test3
-    type:   JOINT
-    visible:    true
-    position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
   # ----- Test Target 4 ----- #
   test4:

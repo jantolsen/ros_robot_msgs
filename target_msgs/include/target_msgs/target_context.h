@@ -179,7 +179,7 @@ namespace Target
             *
             * Organize and structure the loaded parameters into target message-type.
             * If successful, the gathered target is returned. 
-            * Function returns fals if it fails to load target data.
+            * If parameter loading fails, function returns false.
             *
             * \param param_name Target parameter name, located on parameter server [std::string]
             * \return Function return: Successful: Target data [target_msgs::TargetData] / Unsuccessful: false [bool]
@@ -188,19 +188,49 @@ namespace Target
                 const std::string& param_name);
 
 
-            // Load target Parameter Data
+            // Load Target Parameter Data
             // -------------------------------
             // (Function Overloading)
             /** \brief Reads and loads information on custom target from the parameter server.
             *
             * Organize and structure the loaded parameters into target message-type.
             * If successful, the gathered target is returned. 
-            * Function returns fals if it fails to load target data.
+            * If parameter loading fails, function returns false.
             *
             * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
             * \return Function return: Successful: target data [target_msgs::TargetData] / Unsuccessful: false [bool]
             */
             boost::optional<target_msgs::TargetData> loadParamData(
+                const XmlRpc::XmlRpcValue& param_xml);
+
+
+            // Load Target-Joint Parameter Data
+            // -------------------------------
+            /** \brief Reads and loads information on target-joint from the parameter server.
+            *
+            * Organize and structure the loaded parameters into target-joint message-type.
+            * If successful, the gathered target-joint data is returned.
+            * If parameter loading fails, an error message is given and a runtime expection is thrown..
+            *
+            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
+            * \return Function return: Successful: target data [target_msgs::TargetJoint] / Unsuccessful: false [bool]
+            */
+            target_msgs::TargetJoint loadParamTargetJoint(
+                const XmlRpc::XmlRpcValue& param_xml);
+
+
+            // Load Target-Joint Parameter Data
+            // -------------------------------
+            /** \brief Reads and loads information on target-cartesian from the parameter server.
+            *
+            * Organize and structure the loaded parameters into target-cartesian message-type.
+            * If successful, the gathered target-cartesian data is returned. 
+            * If parameter loading fails, an error message is given and a runtime expection is thrown..
+            *
+            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
+            * \return Function return: Successful: target data [target_msgs::TargetCartesian] / Unsuccessful: false [bool]
+            */
+            target_msgs::TargetCartesian loadParamTargetCartesian(
                 const XmlRpc::XmlRpcValue& param_xml);
 
 

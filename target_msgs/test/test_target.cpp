@@ -85,17 +85,40 @@ int main(int argc, char** argv)
             return false;
         }
 
-        auto test = param_xml["asd"];
-
-        
-
-        ROS_INFO_STREAM("Test: " << test);
-        ROS_INFO_STREAM("Test teype: " << test.getType());
-
         Target::TargetContext target_2(nh, param_xml);
 
         // Debug Print
         target_2.printTargetData();
+
+        target_msgs::TargetData tmp = target_2.getTargetData();
+
+        // DEBUG PRINT
+        ROS_INFO_STREAM("   Position [RAD]:");
+        // Iterate through all joint positions
+        for (size_t i = 0; i < tmp.joint.position.size(); i++)
+        {
+            // Print joint position for each joint
+            ROS_INFO_STREAM("       q[" << i+1 << "]: " << tmp.joint.position[i] << " [rad]");
+        }
+        ROS_INFO_STREAM(" ");
+
+    // Target #3
+    // -------------------------------
+        // Define and initialize Target-Handler
+        param_name = "/targets_test/test3";
+        Target::TargetContext target_3(nh, param_name);
+
+        // Debug Print
+        target_3.printTargetData();
+
+    // Target #4
+    // -------------------------------
+        // Define and initialize Target-Handler
+        param_name = "/targets_test/test4";
+        Target::TargetContext target_4(nh, param_name);
+
+        // Debug Print
+        target_4.printTargetData();
 
     // Target #5
     // -------------------------------
