@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     // User-Frame Manager
     // -------------------------------
         // Define and initialize User-Frame Manager
-        // Frame::UserFrameManager userFrameManager(nh, "/user_frames");
+        Frame::UserFrameManager userFrameManager(nh, "/user_frames");
 
 
     // User-Frame #1
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
         // uf_2.broadcastUserFrame();
         // uf_3.broadcastUserFrame();
 
-        // userFrameManager.publishAndBroadcastUserFrames();
+        userFrameManager.publishAndBroadcastUserFrames();
 
         ros::spinOnce(); // Handle ROS callbacks
     }

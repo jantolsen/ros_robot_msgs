@@ -46,7 +46,7 @@ user_frames_test:
   # ----- Test Frame 1 ----- #
   test1:
     name:           test1
-    ref_frame:      true
+    ref_frame:      world
     pose:
       position:
         x:  0.1

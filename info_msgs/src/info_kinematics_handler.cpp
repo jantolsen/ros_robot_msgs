@@ -119,28 +119,42 @@ namespace Info
             // Parameters are acquired as XmlRpcValue data-type which acts as generic collector.
             // Elements of the loaded parameters are validated and assigned to the respective element in the info-message-type
             // (data entries of XmlRpcValue needs to be cast to appropriate data-type)
-            
-            // Initialize a flag to track the validation of the parameter loading
-            bool params_valid = true;
 
-            // Load, validate and assign parameter data
-            if (!Toolbox::Parameter::loadParamItemKey<std::string>(info_kinematics_data.solver_name, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
-            if (!Toolbox::Parameter::loadParamItemValue<int>(info_kinematics_data.solver_type, kinematicSolverTypeMap_, param_xml, "solver_type")) params_valid = false;
-            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics_data.search_resolution, param_xml, "search_resolution")) params_valid =  false;
-            if (!Toolbox::Parameter::loadParamData<double>(info_kinematics_data.timeout, param_xml, "timeout")) params_valid =  false;
-            if (!Toolbox::Parameter::loadParamData<int>(info_kinematics_data.attempts, param_xml, "attempts")) params_valid =  false;
-
-            // Check if parameter loading was successful
-            // (If any parameter failed to load, the flag will be false. Otherwise, it will be true)
-            if(!params_valid)
+            // Check if given parameter is a struct-type
+            if(!Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
             {
-                // Parameter loading failed
+                // Parameter is not a struct
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                    << ": Failed! Parameter(s) related to Information-Kinematics is either missing or configured incorrectly");
+                    << ": Failed! Given Information-Kinematics parameter is not a struct");
 
                 // Function return
                 return false;
             }
+
+            // Try to load parameters
+            try
+            {
+                // Load, validate and assign parameter data
+                info_kinematics_data.solver_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+                info_kinematics_data.solver_type = Toolbox::Parameter::getParamData<int>(param_xml, "solver_type", kinematicSolverTypeMap_);
+                info_kinematics_data.search_resolution = Toolbox::Parameter::getParamData<double>(param_xml, "search_resolution");
+                info_kinematics_data.timeout = Toolbox::Parameter::getParamData<double>(param_xml, "timeout");
+                info_kinematics_data.attempts = Toolbox::Parameter::getParamData<int>(param_xml, "attempts");
+            }
+            // Catch exception(s)
+            catch (const std::exception& e) 
+            {
+                // Parameter loading failed
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Parameter(s) related to Information-Kinematics" 
+                    << " is either missing or configured incorrectly");
+
+                // Exception details
+                std::cerr << e.what() << std::endl;
+
+                // Function return
+                return false;
+            } 
 
             // Function return
             return true;

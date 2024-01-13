@@ -211,14 +211,14 @@ namespace Frame
         try
         {
             // Load, validate and assign parameter data
-            user_frame_data.name = Toolbox::Parameter::loadParamData<std::string>(param_xml, "name");
-            user_frame_data.ref_frame = Toolbox::Parameter::loadParamData<std::string>(param_xml, "ref_frame");
-            user_frame_data.pose_rpy.position.x = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "x");
-            user_frame_data.pose_rpy.position.y = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "y");
-            user_frame_data.pose_rpy.position.z = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["position"], "z");
-            user_frame_data.pose_rpy.orientation.x = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "rx");
-            user_frame_data.pose_rpy.orientation.y = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "ry");
-            user_frame_data.pose_rpy.orientation.z = Toolbox::Parameter::loadParamData<double>(param_xml["pose"]["orientation"], "rz");
+            user_frame_data.name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+            user_frame_data.ref_frame = Toolbox::Parameter::getParamData<std::string>(param_xml, "ref_frame");
+            user_frame_data.pose_rpy.position.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "x");
+            user_frame_data.pose_rpy.position.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "y");
+            user_frame_data.pose_rpy.position.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "z");
+            user_frame_data.pose_rpy.orientation.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rx");
+            user_frame_data.pose_rpy.orientation.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "ry");
+            user_frame_data.pose_rpy.orientation.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rz");
         }
         // Catch exception(s)
         catch (const std::exception& e) 

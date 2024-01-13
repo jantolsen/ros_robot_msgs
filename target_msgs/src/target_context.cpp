@@ -212,14 +212,10 @@ namespace Target
         try
         {
             // Load, validate and assign parameter data
-            // target_data.name = Toolbox::ParameterLoader<std::string>::getParamData(param_xml, "name");
-            // target_data.type_name = Toolbox::ParameterLoader<std::string>::getParamData(target_type_map, param_xml, "type");
-            // target_data.type = Toolbox::Parameter::loadParamItemValue<int>(target_type_map, param_xml, "type");
-            // target_data.visible = Toolbox::ParameterLoader<bool>::getParamData(param_xml, "visible");
-
-            target_data.name = Toolbox::ParameterTest::loadParamData<std::string>(param_xml, "name");
-            target_data.type_name = Toolbox::ParameterTest::loadParamData<std::string>(param_xml, "type", target_type_names);
-            std::vector<double> target_type_names_vec = Toolbox::ParameterTest::loadParamData<std::vector<double>>(param_xml, "test_vec");
+            target_data.name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+            target_data.type_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "type", target_type_names);
+            target_data.type = Toolbox::Parameter::getParamData<int>(param_xml, "type", target_type_map);
+            target_data.visible = Toolbox::Parameter::getParamData<bool>(param_xml, "visible");
         }
         // Catch Exception(s)
         catch (const std::exception& e) 
