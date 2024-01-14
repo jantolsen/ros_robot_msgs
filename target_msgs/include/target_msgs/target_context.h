@@ -60,6 +60,14 @@ namespace Target
         CARTESIAN
     };
 
+    // External Axis Type 
+    // (Matches the types defined in TargetExtAxis.msg)
+    enum ExtAxisType
+    {
+        ROTATION,
+        LINEAR
+    };
+
     // Target Context Class
     // -------------------------------
     /** \brief Robot system target context
@@ -266,6 +274,8 @@ namespace Target
             target_msgs::TargetData target_data_;
             std::map<std::string, TargetType> target_type_map_;
             std::vector<std::string> target_type_names_vec_;
+            std::map<std::string, ExtAxisType> target_axistype_map_;
+            std::vector<std::string> target_axistype_names_vec_;
 
             // ROS Nodehandle(s)
             // -------------------------------
@@ -301,6 +311,33 @@ namespace Target
             */
             static std::vector<std::string> initTargetTypeNames(
                 std::map<std::string, TargetType> target_type_map);
+
+
+            // Initialize External Axis Type Map
+            // -------------------------------
+            /** \brief Initialize external axis type map
+            *
+            * Each axis-type [ExtAxisType] is paired with a name [std::string],
+            * where the entries of external-axis-types matches the defined types in TargetExtAxis.msg
+            * Function populates and returns the external-axis-type map [std::map<std::string, ExtAxisType>]
+            *
+            * \return Target-Type Map [std::map<std::string, ExtAxisType>]
+            */
+            static std::map<std::string, ExtAxisType> initExtAxisTypeMap();
+
+
+            // Initialize External Axis Type Names
+            // -------------------------------
+            /** \brief Initialize target type names
+            *
+            * Each target-type [ExtAxisType] is paired with a name [std::string] in a map.
+            * Function iterates over the given external-axis-type map and stores the external-axis-type names in a vector.
+            *
+            * \param target_type_map Target-Type Map [std::map<std::string, ExtAxisType>]
+            * \return Target-Type Names [std::vector<std::string>]
+            */
+            static std::vector<std::string> initExtAxisTypeNames(
+                std::map<std::string, ExtAxisType> target_type_map);
 
     }; // End Class: TargetContext
 } // End Namespace: Info

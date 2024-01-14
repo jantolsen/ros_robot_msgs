@@ -8,9 +8,15 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# External Axis
-# Target configuration includes external axis (e.g. robot track)
+# External axis
+# Target configuration including external axis (e.g. robot track)
+# target_msgs/TargetJoint ext_axis
 bool ext_axis
+
+# Number of Joints
+# Normal target configuration: 6-joints
+# Special target configuration: 7-joints (includes external axis e.g robot-track)
+int32 num_joints
 
 # Joint-Posiiton (deg)
 # User-friendly representation of joint-poisiton, typically used for configuration

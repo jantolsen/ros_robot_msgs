@@ -222,30 +222,14 @@ namespace Target
             {
                 // Target-Type: Joint
                 case static_cast<int>(TargetType::JOINT):
-                    // Target-Joint data
-                    // Load, validate and assign parameter data
-                    target_data.joint.ext_axis = Toolbox::Parameter::getParamData<bool>(param_xml, "ext_axis", false);
-                    target_data.joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "position");
-                    target_data.joint.position = Toolbox::Convert::degToRad(target_data.joint.position_deg);
-
-                    // Call loading of Target-Joint parameters
-                    // target_data.joint = loadParamTargetJoint(param_xml)
+                    // Load of Target-Joint parameter-data
+                    target_data.joint = loadParamTargetJoint(param_xml);
                     break;
 
                 // Target-Type: Cartesian
                 case static_cast<int>(TargetType::CARTESIAN):
-                    // Target-Cartesian data
-                    target_data.cartesian.ref_frame = Toolbox::Parameter::getParamData<std::string>(param_xml, "ref_frame");
-                    target_data.cartesian.pose_rpy.position.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "x");
-                    target_data.cartesian.pose_rpy.position.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "y");
-                    target_data.cartesian.pose_rpy.position.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "z");
-                    target_data.cartesian.pose_rpy.orientation.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rx");
-                    target_data.cartesian.pose_rpy.orientation.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "ry");
-                    target_data.cartesian.pose_rpy.orientation.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rz");
-                    target_data.cartesian.pose = Toolbox::Convert::poseRPYToPose(target_data.cartesian.pose_rpy);
-
-                    // Call loading of Target-Cartesian parameters
-                    // target_data.cartesian = loadParamTargetCartesian(param_xml)
+                    // Load Target-Cartesian parameter-data
+                    target_data.cartesian = loadParamTargetCartesian(param_xml);
                     break;
 
                 // Target type: Unknown/Invalid 
@@ -284,65 +268,83 @@ namespace Target
     {   
         // Define local variable(s)
         target_msgs::TargetJoint target_joint;
-        int num_axis = 6;
+        XmlRpc::XmlRpcValue param_joint = param_xml["joint"];
+        std::string target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
 
-        // Load, validate and assign parameter data
-        try
+        // Determine and check number of joints by evaluating joint-position parameter-size
+        int num_joints = param_joint.size();
+        if((num_joints != 6) && (num_joints != 7))
         {
-            // Target-Joint data
-            target_joint.ext_axis = Toolbox::Parameter::getParamData<bool>(param_xml, "ext_axis");
-            target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "position");
-            target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
+            // Invalid parameter configuration
+            // Error message
+            std::string error_msgs = CLASS_PREFIX + __FUNCTION__ 
+                + ": Failed! Parameter(s) related to Target [" + target_name + "]" 
+                + " is configured with an invalid number of joint-position values [" + std::to_string(num_joints) + "]";
 
-            // for (int i = 0; i < param_xml["posiiton"].size(); ++i)
-            // {
-            //     target_joint_data.position
-            // }
+            // Report to terminal
+            ROS_ERROR_STREAM(error_msgs);
+
+            // Throw runtime exception
+            throw std::runtime_error("Runtime exception! " + error_msgs);
         }
 
-        // Catch Exception(s)
-        catch (const std::exception& e) 
-        {
-            // Parameter loading failed
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to Target-Joint" 
-                << " is either missing or configured incorrectly");
+        // Load, validate and assign parameter data
+        target_joint.num_joints = num_joints;
+        target_joint.ext_axis = (num_joints == 7) ? true : false;
 
-            // Exception details
-            std::cerr << e.what() << std::endl;
-        } 
+        // Determine configuration structure by evaluating joint-position parameter-type
+        switch (param_joint.getType())
+        {
+            // Array: 
+            // Parameter of Target-Joint is configured as an array
+            case XmlRpc::XmlRpcValue::TypeArray:
+                // Load, validate and assign parameter data
+                target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "joint");
+                target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
+                break;
+
+            // Struct: 
+            // Parameter of Target-Joint is configured as a struct
+            case XmlRpc::XmlRpcValue::TypeStruct:
+                // Special configuration: External axis
+                if(target_joint.ext_axis)
+                {
+                    // Load, validate and assign parameter data
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q0"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q1"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q2"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q3"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q4"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q5"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q6"));
+                    target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
+                }
+                // Normal configuration
+                else
+                {
+                    // Load, validate and assign parameter data
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q1"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q2"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q3"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q4"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q5"));
+                    target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q6"));
+                    target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
+                }
+                break;
+            
+            // Unknown: 
+            // Parameter of Parameter of Target-Joint is configured with unknown type
+            default:
+                // Failed to get parameter(s)
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Parameter(s) related to Target [" << target_name <<"] is wrongly defined." 
+                    << " Target-Joint parameters are neither an array nor struct");
+                break;
+        } // Switch End: param_joint_position.getType()
 
         // Function return
         return target_joint;
-
-
-        // // Determine if parameter configuration structure
-        // // Evaluate parameter type
-        // switch (param_xml["position"].getType())
-        // {
-        //     // Array: 
-        //     // Parameter of Target-Joint is configured as an array
-        //     case XmlRpc::XmlRpcValue::TypeArray:
-
-        //         break;
-
-        //     // Struct: 
-        //     // Parameter of Target-Joint is configured as a struct
-        //     case XmlRpc::XmlRpcValue::TypeStruct:
-        //         /* code */
-        //         break;
-            
-        //     // Unknown: 
-        //     // Parameter of Parameter of Target-Joint is configured with unknown type
-        //     default:
-        //         // Failed to get parameter(s)
-        //         ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-        //             << ": Failed! Target-Joint Parameter(s) [" << param_name <<"] is wrongly defined." 
-        //             << " Target-Joint parameters are neither an array nor struct");
-        //     default:
-        //         break;
-        // }
-
     } // Function End: loadParamTargetJoint
 
 
@@ -353,32 +355,69 @@ namespace Target
     {
         // Define local variable(s)
         target_msgs::TargetCartesian target_cartesian;
+        std::string target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+        std::vector<double> tmp_target_position;
+        std::vector<double> tmp_target_orientation;
 
-        // Load, validate and assign parameter data
-        try
+        // Determine configuration structure by evaluating cartesian-pose [posiiton] parameter-type
+        switch (param_xml["pose"]["position"].getType())
         {
-            // Target-Cartesian data
-            target_cartesian.ref_frame = Toolbox::Parameter::getParamData<std::string>(param_xml, "ref_frame");
-            target_cartesian.pose_rpy.position.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "x");
-            target_cartesian.pose_rpy.position.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "y");
-            target_cartesian.pose_rpy.position.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "z");
-            target_cartesian.pose_rpy.orientation.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rx");
-            target_cartesian.pose_rpy.orientation.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "ry");
-            target_cartesian.pose_rpy.orientation.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rz");
-            target_cartesian.pose = Toolbox::Convert::poseRPYToPose(target_cartesian.pose_rpy);
-        }
+            // Array: 
+            // Parameter of Target-Cartesian is configured as an array
+            case XmlRpc::XmlRpcValue::TypeArray:
+                // Load, validate and assign parameter data
+                tmp_target_position = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml["pose"], "position");
+                tmp_target_orientation = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml["pose"], "orientation");
 
-        // Catch Exception(s)
-        catch (const std::exception& e) 
-        {
-            // Parameter loading failed
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to Target-Cartesian" 
-                << " is either missing or configured incorrectly");
+                // Check vector size
+                if((tmp_target_position.size() != 3) || (tmp_target_orientation.size() != 3))
+                {
+                    // Invalid parameter configuration
+                    // Error message
+                    std::string error_msgs = CLASS_PREFIX + __FUNCTION__ 
+                        + ": Failed! Parameter(s) related to Target [" + target_name + "]" 
+                        + " is wrongly defined. Size of position or orientation vector is wrong!";
 
-            // Exception details
-            std::cerr << e.what() << std::endl;
-        } 
+                    // Report to terminal
+                    ROS_ERROR_STREAM(error_msgs);
+
+                    // Throw runtime exception
+                    throw std::runtime_error("Runtime exception! " + error_msgs);
+                }
+
+                // Assign acquired parameter-data
+                target_cartesian.pose_rpy.position.x = tmp_target_position[0];
+                target_cartesian.pose_rpy.position.y = tmp_target_position[1];
+                target_cartesian.pose_rpy.position.z = tmp_target_position[2];
+                target_cartesian.pose_rpy.orientation.x = tmp_target_orientation[0];
+                target_cartesian.pose_rpy.orientation.y = tmp_target_orientation[1];
+                target_cartesian.pose_rpy.orientation.z = tmp_target_orientation[2];
+                target_cartesian.pose = Toolbox::Convert::poseRPYToPose(target_cartesian.pose_rpy);
+                break;
+
+            // Struct: 
+            // Parameter of Target-Joint is configured as a struct
+            case XmlRpc::XmlRpcValue::TypeStruct:
+                // Load, validate and assign parameter data
+                target_cartesian.ref_frame = Toolbox::Parameter::getParamData<std::string>(param_xml, "ref_frame");
+                target_cartesian.pose_rpy.position.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "x");
+                target_cartesian.pose_rpy.position.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "y");
+                target_cartesian.pose_rpy.position.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["position"], "z");
+                target_cartesian.pose_rpy.orientation.x = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rx");
+                target_cartesian.pose_rpy.orientation.y = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "ry");
+                target_cartesian.pose_rpy.orientation.z = Toolbox::Parameter::getParamData<double>(param_xml["pose"]["orientation"], "rz");
+                target_cartesian.pose = Toolbox::Convert::poseRPYToPose(target_cartesian.pose_rpy);
+                break;
+            
+            // Unknown: 
+            // Parameter of Parameter of Target-Joint is configured with unknown type
+            default:
+                // Failed to get parameter(s)
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                    << ": Failed! Parameter(s) related to Target [" << target_name <<"] is wrongly defined." 
+                    << " Target-Cartesian parameters are neither an array nor struct");
+                break;
+        } // Switch End: param_cartesian_pose["position"].getType()
 
         // Function return
         return target_cartesian;
@@ -392,12 +431,23 @@ namespace Target
         // Print information of local target joint data to terminal
         
         ROS_INFO_STREAM("Joint Target:");
+        ROS_INFO_STREAM("   Number of Joints: " << target_data_.joint.num_joints);
+        ROS_INFO_STREAM("   External Axis: "    << (target_data_.joint.ext_axis ? "TRUE" : "FALSE"));
         ROS_INFO_STREAM("   Position:");
         // Iterate through all joint positions
-        for (size_t i = 0; i < target_data_.joint.position_deg.size(); i++)
+        for (size_t i = 0; i < target_data_.joint.num_joints; i++)
         {
+            // External axis padding
+            int ext_axis_padding = 0;
+
+            // Check for external axis
+            if(!target_data_.joint.ext_axis)
+            {
+                ext_axis_padding = 1;
+            }
+
             // Print joint position for each joint
-            ROS_INFO_STREAM("       q[" << i+1 << "]: " << target_data_.joint.position_deg[i] << " [deg]");
+            ROS_INFO_STREAM("       q[" << i + ext_axis_padding << "]: " << target_data_.joint.position_deg[i] << " [deg]");
         }
         ROS_INFO_STREAM(" ");
     } // Function End: printTargetJointData()

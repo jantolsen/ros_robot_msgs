@@ -87,21 +87,6 @@ int main(int argc, char** argv)
 
         Target::TargetContext target_2(nh, param_xml);
 
-        // Debug Print
-        target_2.printTargetData();
-
-        target_msgs::TargetData tmp = target_2.getTargetData();
-
-        // DEBUG PRINT
-        ROS_INFO_STREAM("   Position [RAD]:");
-        // Iterate through all joint positions
-        for (size_t i = 0; i < tmp.joint.position.size(); i++)
-        {
-            // Print joint position for each joint
-            ROS_INFO_STREAM("       q[" << i+1 << "]: " << tmp.joint.position[i] << " [rad]");
-        }
-        ROS_INFO_STREAM(" ");
-
     // Target #3
     // -------------------------------
         // Define and initialize Target-Handler
@@ -122,11 +107,30 @@ int main(int argc, char** argv)
 
     // Target #5
     // -------------------------------
+        // Define and initialize Target-Handler
+        param_name = "/targets_test/test5";
+        Target::TargetContext target_5(nh, param_name);
+
+        // Debug Print
+        target_5.printTargetData();
+
+    // Target #6
+    // -------------------------------
+        // Define and initialize Target-Handler
+        param_name = "/targets_test/test6";
+        Target::TargetContext target_6(nh, param_name);
+
+        // Debug Print
+        target_6.printTargetData();
+    
+
+    // Target #X
+    // -------------------------------
         // Define User-Frame Msgs
         target_msgs::TargetData targetDataMsg;
 
         // Assign parameters
-        targetDataMsg.name = "test5";
+        targetDataMsg.name = "testX";
         targetDataMsg.type_name = "JOINT";
         targetDataMsg.type = static_cast<int>(Target::TargetType::CARTESIAN);
         targetDataMsg.visible = true;
@@ -142,10 +146,10 @@ int main(int argc, char** argv)
         targetDataMsg.cartesian.pose = Toolbox::Convert::poseRPYToPose(targetDataMsg.cartesian.pose_rpy);
 
         // Define and initialize Target-Handler
-        Target::TargetContext target_5(nh, targetDataMsg);
+        Target::TargetContext target_X(nh, targetDataMsg);
 
         // Debug Print
-        target_5.printTargetData();
+        target_X.printTargetData();
 
 
     // Main Loop
@@ -156,7 +160,7 @@ int main(int argc, char** argv)
         // Publish Target(s)
         // target_1.publishTarget();
         // target_2.publishTarget();
-        target_5.publishTarget();
+        // target_X.publishTarget();
 
         // userFrameManager.publishAndBroadcastUserFrames();
 

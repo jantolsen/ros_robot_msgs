@@ -131,25 +131,58 @@ targets_test:
     name:       test2
     type:       JOINT
     visible:    true
-    ext_axis:   true
-    position: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
+    ext_axis:
+      installed:  true
+      type:       ROTATION
+    joint: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
 
   # ----- Test Target 3 ----- #
   test3:
     name:   test3
     type:   JOINT
     visible:    true
-    position:
-      q1:   0.0
-      q2:   0.0
-      q3:   0.0
-      q4:   0.0
+    ext_axis:
+      installed:  true
+      type:       ROTATION
+    joint:
+      q1:   20.5
+      q2:   66.77
+      q3:   5.6
+      q4:   -20.0
       q5:   0.0
-      q6:   0.0
+      q6:   33.0
 
   # ----- Test Target 4 ----- #
   test4:
     name:       test4
+    type:       JOINT
+    visible:    true
+    ext_axis:
+      installed:  true
+      type:       ROTATION
+    joint: [-180.0, 22.5, 45.0, 90.0, 180.0, -22.5, -45.0]
+    
+
+  # ----- Test Target 5 ----- #
+  test5:
+    name:   test5
+    type:   JOINT
+    ext_axis:
+      installed:  true
+      type:       LINEAR
+    joint:
+      q0:   -180.0
+      q1:   20.5
+      q2:   66.77
+      q3:   5.6
+      q4:   -20.0
+      q5:   0.0
+      q6:   33.0
+    
+
+  # ----- Test Target 6 ----- #
+  test6:
+    name:       test6
     type:       CARTESIAN
     ref_frame:  "world"
     visible:    true

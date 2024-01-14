@@ -57,6 +57,7 @@ add_message_files(
   TargetData.msg
   TargetJoint.msg
   TargetCartesian.msg
+  # TargetExtAxis.msg
 )
 
 ## Generate services in the 'srv' folder
