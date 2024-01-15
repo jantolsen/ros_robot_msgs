@@ -27,5 +27,9 @@ target_msgs/TargetJoint joint
 # Target Cartesian
 target_msgs/TargetCartesian cartesian
 
+# External axis
+# Robot configuration for external axis (e.g. robot track)
+target_msgs/TargetExtAxis external_axis
+
 # Visualize Target
 bool visible

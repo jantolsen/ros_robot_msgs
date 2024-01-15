@@ -132,7 +132,7 @@ targets_test:
     type:       JOINT
     visible:    true
     ext_axis:
-      installed:  true
+      installed:  false
       type:       ROTATION
     joint: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
 
@@ -142,7 +142,7 @@ targets_test:
     type:   JOINT
     visible:    true
     ext_axis:
-      installed:  true
+      installed:  false
       type:       ROTATION
     joint:
       q1:   20.5

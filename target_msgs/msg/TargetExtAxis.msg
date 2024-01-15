@@ -19,6 +19,6 @@ bool installed
 
 # Identifier for determining axis-type 
 # [ROTATION [0], LINEAR [1]]
-int32 axis_type
-string axis_type_name
+int32 type
+string type_name
 

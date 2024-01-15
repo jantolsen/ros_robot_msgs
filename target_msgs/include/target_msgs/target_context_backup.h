@@ -60,6 +60,14 @@ namespace Target
         CARTESIAN
     };
 
+    // External Axis Type 
+    // (Matches the types defined in TargetExtAxis.msg)
+    enum ExtAxisType
+    {
+        ROTATION,
+        LINEAR
+    };
+
     // Target Context Class
     // -------------------------------
     /** \brief Robot system target context
@@ -172,44 +180,20 @@ namespace Target
         // and classes which inherits from the parent class
         protected:
 
-            // Initialize Target Context
+            // Load Target Parameter Data
             // -------------------------------
             // (Function Overloading)
-            /** \brief Initialize Target Context
+            /** \brief Reads and loads information on custom target from the parameter server.
             *
-            * Uses the given target data to create class related functionalities
-            *
-            * \param target_data Target data [target_msgs::TargetData]
-            */
-            void init(const target_msgs::TargetData& target_data);
-
-
-            // Initialize Target Context
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Initialize Target Context
-            *
-            * Uses the given parameter name to load target parameter data from parameter server
-            * Parameter data is then used to create the related target message-type
-            * and class related functionalities
+            * Organize and structure the loaded parameters into target message-type.
+            * If successful, the gathered target is returned. 
+            * If parameter loading fails, function returns false.
             *
             * \param param_name Target parameter name, located on parameter server [std::string]
+            * \return Function return: Successful: Target data [target_msgs::TargetData] / Unsuccessful: false [bool]
             */
-            void init(const std::string& param_name);
-
-
-            // Initialize Target Context
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Initialize Target Context
-            *
-            * Load the given parameter data located on the parameter server.
-            * Parameter data is then used to create the class related target message-type
-            * and class related functionalities
-            *
-            * \param param_xml  Target parameter, located on parameter server [XmlRpc::XmlRpcValue]
-            */
-            void init(const XmlRpc::XmlRpcValue& param_xml);
+            boost::optional<target_msgs::TargetData> loadParamData(
+                const std::string& param_name);
 
 
             // Load Target Parameter Data
@@ -219,23 +203,7 @@ namespace Target
             *
             * Organize and structure the loaded parameters into target message-type.
             * If successful, the gathered target is returned. 
-            * Function returns fals if it fails to load target data.
-            *
-            * \param param_name Target parameter name, located on parameter server [std::string]
-            * \return Function return: Successful: Target data [target_msgs::TargetData] / Unsuccessful: false [bool]
-            */
-            boost::optional<target_msgs::TargetData> loadParamData(
-                const std::string& param_name);
-
-
-            // Load target Parameter Data
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Reads and loads information on custom target from the parameter server.
-            *
-            * Organize and structure the loaded parameters into target message-type.
-            * If successful, the gathered target is returned. 
-            * Function returns fals if it fails to load target data.
+            * If parameter loading fails, function returns false.
             *
             * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
             * \return Function return: Successful: target data [target_msgs::TargetData] / Unsuccessful: false [bool]
@@ -244,33 +212,33 @@ namespace Target
                 const XmlRpc::XmlRpcValue& param_xml);
 
 
-            // Load Target Joint Data
+            // Load Target-Joint Parameter Data
             // -------------------------------
-            /** \brief Reads and loads information on custom target-joint from the parameter server.
+            /** \brief Reads and loads information on target-joint from the parameter server.
             *
             * Organize and structure the loaded parameters into target-joint message-type.
-            * If successful, the gathered target is returned.
-            * Function returns fals if it fails to load target-joint data.
+            * If successful, the gathered target-joint data is returned.
+            * If parameter loading fails, an error message is given and a runtime expection is thrown..
             *
-            * \param param_xml  Target-Joint parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target-joint data [target_msgs::TargetJoint] / Unsuccessful: false [bool]
+            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
+            * \return Function return: Successful: target data [target_msgs::TargetJoint] / Unsuccessful: false [bool]
             */
-            boost::optional<target_msgs::TargetJoint> loadParamJointData(
+            target_msgs::TargetJoint loadParamTargetJoint(
                 const XmlRpc::XmlRpcValue& param_xml);
 
 
-            // Load Target Cartesian Data
+            // Load Target-Joint Parameter Data
             // -------------------------------
-            /** \brief Reads and loads information on custom target-cartesian from the parameter server.
+            /** \brief Reads and loads information on target-cartesian from the parameter server.
             *
             * Organize and structure the loaded parameters into target-cartesian message-type.
-            * If successful, the gathered target is returned.
-            * Function returns fals if it fails to load target-cartesian data.
+            * If successful, the gathered target-cartesian data is returned. 
+            * If parameter loading fails, an error message is given and a runtime expection is thrown..
             *
-            * \param param_xml  Target-Cartesian parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target-cartesian data [target_msgs::TargetCartesian] / Unsuccessful: false [bool]
+            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
+            * \return Function return: Successful: target data [target_msgs::TargetCartesian] / Unsuccessful: false [bool]
             */
-            boost::optional<target_msgs::TargetCartesian> loadParamCartesianData(
+            target_msgs::TargetCartesian loadParamTargetCartesian(
                 const XmlRpc::XmlRpcValue& param_xml);
 
 
@@ -305,6 +273,9 @@ namespace Target
             target_msgs::TargetCartesian target_cartesian_data_;
             target_msgs::TargetData target_data_;
             std::map<std::string, TargetType> target_type_map_;
+            std::vector<std::string> target_type_names_vec_;
+            std::map<std::string, ExtAxisType> target_axistype_map_;
+            std::vector<std::string> target_axistype_names_vec_;
 
             // ROS Nodehandle(s)
             // -------------------------------
@@ -321,11 +292,52 @@ namespace Target
             *
             * Each target-type [TargetType] is paired with a name [std::string],
             * where the entries of target-types matches the defined types in TargetData.msg
-            * Function is aimed to initialzie the local target-type map [std::map<std::string, TargetType>]
+            * Function populates and returns the target-type map [std::map<std::string, TargetType>]
             *
             * \return Target-Type Map [std::map<std::string, TargetType>]
             */
             static std::map<std::string, TargetType> initTargetTypeMap();
+
+
+            // Initialize Target Type Names
+            // -------------------------------
+            /** \brief Initialize target type names
+            *
+            * Each target-type [TargetType] is paired with a name [std::string] in a map.
+            * Function iterates over the given target-type map and stores the target-type names in a vector.
+            *
+            * \param target_type_map Target-Type Map [std::map<std::string, TargetType>]
+            * \return Target-Type Names [std::vector<std::string>]
+            */
+            static std::vector<std::string> initTargetTypeNames(
+                std::map<std::string, TargetType> target_type_map);
+
+
+            // Initialize External Axis Type Map
+            // -------------------------------
+            /** \brief Initialize external axis type map
+            *
+            * Each axis-type [ExtAxisType] is paired with a name [std::string],
+            * where the entries of external-axis-types matches the defined types in TargetExtAxis.msg
+            * Function populates and returns the external-axis-type map [std::map<std::string, ExtAxisType>]
+            *
+            * \return Target-Type Map [std::map<std::string, ExtAxisType>]
+            */
+            static std::map<std::string, ExtAxisType> initExtAxisTypeMap();
+
+
+            // Initialize External Axis Type Names
+            // -------------------------------
+            /** \brief Initialize target type names
+            *
+            * Each target-type [ExtAxisType] is paired with a name [std::string] in a map.
+            * Function iterates over the given external-axis-type map and stores the external-axis-type names in a vector.
+            *
+            * \param target_type_map Target-Type Map [std::map<std::string, ExtAxisType>]
+            * \return Target-Type Names [std::vector<std::string>]
+            */
+            static std::vector<std::string> initExtAxisTypeNames(
+                std::map<std::string, ExtAxisType> target_type_map);
 
     }; // End Class: TargetContext
 } // End Namespace: Info

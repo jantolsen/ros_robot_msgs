@@ -8,11 +8,6 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# External axis
-# Target configuration including external axis (e.g. robot track)
-# target_msgs/TargetJoint ext_axis
-bool ext_axis
-
 # Number of Joints
 # Normal target configuration: 6-joints
 # Special target configuration: 7-joints (includes external axis e.g robot-track)
