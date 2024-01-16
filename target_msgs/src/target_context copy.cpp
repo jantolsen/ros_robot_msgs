@@ -47,7 +47,7 @@ namespace Target
         target_type_map_ = initTargetTypeMap();
         target_type_names_vec_ = initTargetTypeNames(target_type_map_);
 
-    } // Class Constructor End: TargetHandler()
+    } // Class Constructor End: TargetContext()
 
 
     // Class constructor
@@ -61,7 +61,7 @@ namespace Target
     {
         // This constructor delegates the construction of the TargetContext-class to:
         // TargetContext(ros::NodeHandler& nh, const target_msgs::TargetData& target_data)
-    } // Class Constructor End: TargetHandler()
+    } // Class Constructor End: TargetContext()
 
 
     // Class constructor
@@ -75,7 +75,7 @@ namespace Target
     {
         // This constructor delegates the construction of the TargetContext-class to:
         // TargetContext(ros::NodeHandler& nh, const target_msgs::TargetData& target_data)
-    } // Class Constructor End: TargetHandler()
+    } // Class Constructor End: TargetContext()
 
 
     // Class Desctructor
