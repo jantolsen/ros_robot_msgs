@@ -8,6 +8,9 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
+# Target name
+string name
+
 # Reference frame 
 # Frame for which target pose is given relative to
 string ref_frame                              

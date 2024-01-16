@@ -117,7 +117,7 @@ namespace Target
             *
             * \return Return Target-Cartesian data [target_msgs::TargetCartesian]
             */
-            target_msgs::TargetCartesian getTargetCartesianData();
+            target_msgs::TargetCartesian getTargetCartesian();
 
 
             // Update Target-Cartesian Data
@@ -129,17 +129,8 @@ namespace Target
             *
             * \param target_cartesian   Updated Target-Cartesian data [target_msgs::TargetCartesian]
             */
-            void updateTargetData(
+            void updateTargetCartesian(
                 target_msgs::TargetCartesian target_cartesian);
-
-
-            // Print Target-Cartesian Data
-            // -------------------------------
-            /** \brief Print information on target-cartesian data to terminal.
-            *
-            * Implemented for debugging purposes.
-            */
-            void printTargetCartesian();
 
 
             // Load Target-Cartesian Parameter Data
@@ -174,6 +165,15 @@ namespace Target
                 const XmlRpc::XmlRpcValue& param_xml);
 
             
+            // Print Target-Cartesian Data
+            // -------------------------------
+            /** \brief Print information on target-cartesian data to terminal.
+            *
+            * Implemented for debugging purposes.
+            */
+            void printTargetCartesian();
+
+
         // Protected Class members
         // -------------------------------
         // Accessible within the class which defines them, 
@@ -182,7 +182,6 @@ namespace Target
 
             // Get Target-Cartesian Parameter Data
             // -------------------------------
-            // (Function Overloading)
             /** \brief Reads and loads information on target-cartesian from the parameter server.
             *
             * Organize and structure the loaded parameters into target-cartesian message-type.
@@ -205,7 +204,7 @@ namespace Target
 
             // Class Local Member(s)
             // -------------------------------
-            target_msgs::TargetCartesian target_cartesian;
+            target_msgs::TargetCartesian target_cartesian_;
 
             // ROS Nodehandle(s)
             // -------------------------------

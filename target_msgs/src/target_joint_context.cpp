@@ -68,7 +68,7 @@ namespace Target
         ros::NodeHandle& nh,
         const XmlRpc::XmlRpcValue& param_xml)
     :
-        TargetContext(nh, loadParamData(param_xml).value())
+        TargetJointContext(nh, loadParamData(param_xml).value())
     {
         // This constructor delegates the construction of the TargetJointContext-class to:
         // TargetJointContext(ros::NodeHandler& nh, const target_msgs::TargetData& target_data)
@@ -141,6 +141,7 @@ namespace Target
         // (data entries of XmlRpcValue needs to be cast to appropriate data-type)
         
         // Define local variable(s)
+        std::string target_name;
         target_msgs::TargetJoint target_joint;
         target_msgs::TargetExtAxis ext_axis_data;
 
@@ -155,9 +156,23 @@ namespace Target
             return boost::none;
         }
 
+        // Check if given target-joint parameter has "position"-member
+        if(!Toolbox::Parameter::checkMember(param_xml, "position"))
+        {
+            // Parameter is not a struct
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Failed! Given Target-Joint parameter is configured incorrectly");
+
+            // Function return
+            return boost::none;
+        }
+
         // Load, validate and assign parameter data
         try
         {
+            // Get target-joint parameter-data
+            target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+
             // Special-case: target-joint is configured with external-axis
             if(Toolbox::Parameter::getParamData<bool>(param_xml["ext_axis"], "installed", false))
             {
@@ -179,7 +194,7 @@ namespace Target
         {
             // Parameter loading failed
             ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to Target-Joint [" << target_joint.name << "]" 
+                << ": Failed! Parameter(s) related to Target-Joint [" << target_name << "]" 
                 << " is either missing or configured incorrectly");
 
             // Exception details
@@ -214,7 +229,7 @@ namespace Target
         ROS_INFO_STREAM("   External Axis: "        << (target_joint_.external_axis.installed ? "TRUE" : "FALSE"));
         ROS_INFO_STREAM("   Position:");
         // Iterate through all joint positions
-        for (size_t i = 0; i < target_data_.joint.num_joints; i++)
+        for (size_t i = 0; i < target_joint_.num_joints; i++)
         {
             // Special-case: firts joint (external axis)
             if(i == 0)
@@ -226,7 +241,7 @@ namespace Target
             else
             {
                 // Print joint position for respective joint
-                ROS_INFO_STREAM("       q[" << i << "]: " << target_data_.joint.position_deg[i] << " [deg]");
+                ROS_INFO_STREAM("       q[" << i << "]: " << target_joint_.position_deg[i] << " [deg]");
             }
         }
         ROS_INFO_STREAM(" ");
@@ -246,21 +261,21 @@ namespace Target
         ROS_INFO_STREAM("   External Axis Type: "   << target_joint_.external_axis.type_name);
         ROS_INFO_STREAM("   Position:");
         // Iterate through all joint positions
-        for (size_t i = 0; i < target_data_.joint.num_joints; i++)
+        for (size_t i = 0; i < target_joint_.num_joints; i++)
         {
             // Special-case for firts joint (external axis)
             if(i == 0)
             {
                 // External axis unit
-                std::string ext_axis_unit = (target_data_.external_axis.type == static_cast<int>(ExtAxisType::ROTATION)) ? " [deg]" : " [m]";
+                std::string ext_axis_unit = (target_joint_.external_axis.type == static_cast<int>(JointAxisType::ROTATION)) ? " [deg]" : " [m]";
                 // Print joint position for external axis
-                ROS_INFO_STREAM("       q[" << i << "]: " << target_data_.joint.position_deg[i] << ext_axis_unit);
+                ROS_INFO_STREAM("       q[" << i << "]: " << target_joint_.position_deg[i] << ext_axis_unit);
             }
             // Normal-case: all other joints
             else
             {
                 // Print joint position for respective joint
-                ROS_INFO_STREAM("       q[" << i << "]: " << target_data_.joint.position_deg[i] << " [deg]");
+                ROS_INFO_STREAM("       q[" << i << "]: " << target_joint_.position_deg[i] << " [deg]");
             }
         }
         ROS_INFO_STREAM(" ");
@@ -275,63 +290,58 @@ namespace Target
     {
         // Define local variable(s)
         target_msgs::TargetJoint target_joint;
-        XmlRpc::XmlRpcValue param_joint = param_xml["joint"];
-        std::string target_joint_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+        std::string target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
 
         // Determine and check number of joints by evaluating joint-position parameter-size
-        int num_joints = param_joint.size();
+        int num_joints = param_xml["position"].size();
         if(num_joints == 7)
         {
             // Invalid parameter configuration
             std::string error_msgs = CLASS_PREFIX + __FUNCTION__ 
-                + ": Failed! Parameter(s) related to Target-Joint [" + target_joint_name + "]" 
+                + ": Failed! Parameter(s) related to Target-Joint [" + target_name + "]" 
                 + " with number of joint-positions [" + std::to_string(num_joints) + "]. "
                 + " Indicates target-joint with external-axis, but no external-axis parameters is found";
 
-            // Report to terminal
+            // Report to terminal and throw runtime exception
             ROS_ERROR_STREAM(error_msgs);
-
-            // Throw runtime exception
             throw std::runtime_error("Runtime exception! " + error_msgs);
         }
         else if (num_joints != 6)
         {
             // Invalid parameter configuration
             std::string error_msgs = CLASS_PREFIX + __FUNCTION__ 
-                + ": Failed! Parameter(s) related to Target-Joint [" + target_joint_name + "]" 
+                + ": Failed! Parameter(s) related to Target-Joint [" + target_name + "]" 
                 + " is configured with an invalid number of joint-positions [" + std::to_string(num_joints) + "]";
 
-            // Report to terminal
+            // Report to terminal and throw runtime exception
             ROS_ERROR_STREAM(error_msgs);
-
-            // Throw runtime exception
             throw std::runtime_error("Runtime exception! " + error_msgs);
         }
 
         // Determine configuration structure by evaluating joint-position parameter-type
-        switch (param_joint.getType())
+        switch (param_xml["position"].getType())
         {
             // Array: 
             // Parameter of Target-Joint is configured as an array
             case XmlRpc::XmlRpcValue::TypeArray:
                 // Load, validate and assign parameter data
-                target_joint.name = target_joint_name;
+                target_joint.name = target_name;
                 target_joint.num_joints = num_joints;
-                target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "joint");
+                target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "position");
                 target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
 
             // Struct: 
             // Parameter of Target-Joint is configured as a struct
             case XmlRpc::XmlRpcValue::TypeStruct:
                 // Load, validate and assign parameter data
-                target_joint.name = target_joint_name;
+                target_joint.name = target_name;
                 target_joint.num_joints = num_joints;
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q1"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q2"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q3"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q4"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q5"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q6"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q1"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q2"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q3"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q4"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q5"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q6"));
                 target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
             
             // Unknown: 
@@ -339,10 +349,13 @@ namespace Target
             default:
                 // Failed to get parameter(s)
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                    << ": Failed! Parameter(s) related to Target-Joint [" << target_joint_name <<"] is wrongly defined." 
+                    << ": Failed! Parameter(s) related to Target-Joint [" << target_name <<"] is wrongly defined." 
                     << " Target-Joint parameters are neither an array nor struct");
                 break;
-        } // Switch End: param_joint.getType()
+        } // Switch End: param_xml["position"].getType()
+
+        // Function return
+        return target_joint;
     } // Function End: getParamTargetJoint()
 
     
@@ -356,40 +369,37 @@ namespace Target
     {
         // Define local variable(s)
         target_msgs::TargetJoint target_joint;
-        XmlRpc::XmlRpcValue param_joint = param_xml["joint"];
-        std::string target_joint_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+        std::string target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
 
         // Determine and check number of joints by evaluating joint-position parameter-size
-        int num_joints = param_joint.size();
+        int num_joints = param_xml["position"].size();
         if(num_joints != 7)
         {
             // Invalid parameter configuration
             std::string error_msgs = CLASS_PREFIX + __FUNCTION__ 
-                + ": Failed! Parameter(s) related to Target-Joint [" + target_joint_name + "]" 
+                + ": Failed! Parameter(s) related to Target-Joint [" + target_name + "]" 
                 + " is given with external-axis configuration, "
                 + " but has an invalid number of joint-positions [" + std::to_string(num_joints) + "]";
 
-            // Report to terminal
+            // Report to terminal and throw runtime exception
             ROS_ERROR_STREAM(error_msgs);
-
-            // Throw runtime exception
             throw std::runtime_error("Runtime exception! " + error_msgs);
         }
 
         // Determine configuration structure by evaluating joint-position parameter-type
-        switch (param_joint.getType())
+        switch (param_xml["position"].getType())
         {
             // Array: 
             // Parameter of Target-Joint is configured as an array
             case XmlRpc::XmlRpcValue::TypeArray:
                 // Load, validate and assign parameter data
-                target_joint.name = target_joint_name;
+                target_joint.name = target_name;
                 target_joint.num_joints = num_joints;
-                target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "joint");
+                target_joint.position_deg = Toolbox::Parameter::getParamData<std::vector<double>>(param_xml, "position");
                 target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
 
                 // Check External-Axis type for correct conversion
-                if(ext_axis_data.type == static_cast<int>(ExtAxisType::LINEAR))
+                if(ext_axis_data.type == static_cast<int>(JointAxisType::LINEAR))
                 {
                     // Keep original parameter-joint value
                     target_joint.position[0] = target_joint.position_deg[0];
@@ -400,19 +410,19 @@ namespace Target
             // Parameter of Target-Joint is configured as a struct
             case XmlRpc::XmlRpcValue::TypeStruct:
                 // Load, validate and assign parameter data
-                target_joint.name = target_joint_name;
+                target_joint.name = target_name;
                 target_joint.num_joints = num_joints;
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q0"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q1"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q2"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q3"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q4"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q5"));
-                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_joint, "q6"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q0"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q1"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q2"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q3"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q4"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q5"));
+                target_joint.position_deg.push_back(Toolbox::Parameter::getParamData<double>(param_xml["position"], "q6"));
                 target_joint.position = Toolbox::Convert::degToRad(target_joint.position_deg);
 
                 // Check External-Axis type for correct conversion
-                if(ext_axis_data.type == static_cast<int>(ExtAxisType::LINEAR))
+                if(ext_axis_data.type == static_cast<int>(JointAxisType::LINEAR))
                 {
                     // Keep original parameter-joint value
                     target_joint.position[0] = target_joint.position_deg[0];
@@ -423,10 +433,13 @@ namespace Target
             default:
                 // Failed to get parameter(s)
                 ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                    << ": Failed! Parameter(s) related to Target-Joint [" << target_joint_name <<"] is wrongly defined." 
+                    << ": Failed! Parameter(s) related to Target-Joint [" << target_name <<"] is wrongly defined." 
                     << " Target-Joint parameters are neither an array nor struct");
                 break;
-        } // Switch End: param_joint.getType()
+        } // Switch End: param_xml["position"].getType()
+        
+        // Function return
+        return target_joint;
     } // Function End: getParamTargetJointExtAxis()
 
 
@@ -442,8 +455,8 @@ namespace Target
 
         // Load, validate and assign parameter data
         ext_axis.installed = Toolbox::Parameter::getParamData<bool>(param_xml["ext_axis"], "installed");
-        ext_axis.type_name = Toolbox::Parameter::getParamData<std::string>(param_xml["ext_axis"], "type", ext_axis_type_names_vec);
-        ext_axis.type = Toolbox::Parameter::getParamData<int>(param_xml["ext_axis"], "type", ext_axis_type_map);
+        ext_axis.type_name = Toolbox::Parameter::getParamData<std::string>(param_xml["ext_axis"], "type", joint_axis_type_names);
+        ext_axis.type = Toolbox::Parameter::getParamData<int>(param_xml["ext_axis"], "type", joint_axis_type_map);
 
         // Function return
         return ext_axis;
@@ -452,7 +465,7 @@ namespace Target
 
     // Initialize Joint Axis Type Map
     // -------------------------------
-    std::map<std::string, ExtAxisType> TargetJointContext::initJointAxisTypeMap()
+    std::map<std::string, JointAxisType> TargetJointContext::initJointAxisTypeMap()
     {
         // Initialize and populate map
         std::map<std::string, JointAxisType> joint_type_map =
@@ -462,7 +475,7 @@ namespace Target
         };
 
         // Function return
-        return ext_axis_type_map;
+        return joint_type_map;
     } // Function End: initJointAxisTypeMap()
 
 
@@ -475,10 +488,10 @@ namespace Target
         std::vector<std::string> joint_type_names_vec;
 
         // Iterate through joint-axis-type map
-        for (auto& ext_axis_type : ext_axis_type_map)
+        for (auto& joint_type : joint_type_map)
         {
             // Append joint-axis-type name found within joint-axis-type map
-            joint_type_names_vec.push_back(ext_axis_type.first);
+            joint_type_names_vec.push_back(joint_type.first);
         }
         // Function return
         return joint_type_names_vec;    

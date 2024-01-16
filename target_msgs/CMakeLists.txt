@@ -143,6 +143,8 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/target_context.cpp
+  src/target_joint_context.cpp
+  src/target_cartesian_context.cpp
   src/target_manager.cpp
 )
 
