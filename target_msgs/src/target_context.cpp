@@ -194,8 +194,8 @@ namespace Target
         
         // Define local variable(s)
         target_msgs::TargetData target_data;
-        std::map<std::string, TargetType> target_type_map = initTargetTypeMap();
-        std::vector<std::string> target_type_names =  initTargetTypeNames(target_type_map);
+        // std::map<std::string, TargetType> target_type_map = initTargetTypeMap();
+        // std::vector<std::string> target_type_names =  initTargetTypeNames(target_type_map);
 
         // Check if given parameter is a struct-type
         if(!Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
@@ -217,44 +217,29 @@ namespace Target
             target_data.type = Toolbox::Parameter::getParamData<int>(param_xml, "type", target_type_map);
             target_data.visible = Toolbox::Parameter::getParamData<bool>(param_xml, "visible", true);
 
-            // Check if target is configured with External-Axis
-            if(Toolbox::Parameter::getParamData<bool>(param_xml["ext_axis"], "installed", false))
-            {
-                // Load External-Axis parameter-data
-                target_data.external_axis = loadParamExtAxis(param_xml);
-            }
-
             // Determine target-type
             switch (target_data.type)
             {
                 // Target-Type: Joint
                 case static_cast<int>(TargetType::JOINT):
-                    // Check if target is configured with External-Axis
-                    if(target_data.external_axis.installed)
-                    {
-                        // Load Target-Joint (with External-Axis) parameter-data
-                        target_data.joint = loadParamTargetJoint(param_xml, target_data.external_axis);
-                    }
-                    // Target is configured without External-Axis
-                    else
-                    {
-                        // Load of Target-Joint parameter-data
-                        target_data.joint = loadParamTargetJoint(param_xml);
-                    }
-                    
+                    // Load Target-Joint parameter-data
+                    TargetJointContext targetJoint(nh_, param_xml);
+                    target_data.joint = targetJoint.getParamTargetJoint();
                     break;
 
                 // Target-Type: Cartesian
                 case static_cast<int>(TargetType::CARTESIAN):
                     // Load Target-Cartesian parameter-data
-                    target_data.cartesian = loadParamTargetCartesian(param_xml);
+                    TargetCartesianContext targetCartesian(nh_, param_xml);
+                    target_data.cartesian = targetCartesian.getParamTargetCartesian();
                     break;
 
                 // Target type: Unknown/Invalid 
                 default:
                     // Parameter is not a struct
                     ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                        << ": Failed! Target parameter target-type [" << target_data.type << "] is an invalid type");
+                        << ": Failed! Parameter(s) related to Target-Joint [" << target_name << "]" 
+                        << " is configured with an invalid target-type [" << target_data.type << "]");
                     // Function return
                     return boost::none;
             } // End Switch-Case
