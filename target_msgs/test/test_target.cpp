@@ -158,9 +158,13 @@ int main(int argc, char** argv)
     while (ros::ok()) 
     {
         // Publish Target(s)
-        // target_1.publishTarget();
-        // target_2.publishTarget();
-        // target_X.publishTarget();
+        target_1.publishTarget();
+        target_2.publishTarget();
+        target_3.publishTarget();
+        target_4.publishTarget();
+        target_5.publishTarget();
+        target_6.publishTarget();
+        target_X.publishTarget();
 
         // userFrameManager.publishAndBroadcastUserFrames();
 

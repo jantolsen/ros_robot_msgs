@@ -14,6 +14,13 @@
 
 // Include guard:
 // -------------------------------
+// Prevents double declaration of identifiers (e.g. types, enums, static variables)
+//  #ifndef: 
+//      Check whether header-file with the unique value "xxx_H" is already included
+//  #define: 
+//      If header-file not earlier included, it continues and defines the rest of the file 
+//  #endif: 
+//      End of include guard
 #ifndef TARGET_CONTEXT_H       
 #define TARGET_CONTEXT_H
 

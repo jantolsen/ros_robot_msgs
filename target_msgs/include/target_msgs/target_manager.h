@@ -146,6 +146,42 @@ namespace Target
             std::shared_ptr<ros::ServiceServer> createTargetObject_server_;  // ROS Server for creating a Target object
             std::shared_ptr<ros::ServiceServer> updateTargetObject_server_;  // ROS Server for updating Target object
 
+
+            // Service Callback: Create Target object
+            // -------------------------------
+            /** \brief Create target object callback function.
+            *
+            * Service callback function for creating a custom Target object.
+            * Requires information on target-name, target-type and target data
+            * related to specified target-type. 
+            * The following target-types are supported:
+            * 1) Joint Target
+            * 2) Cartesian Target
+            *
+            * \param request    Service-Request [target_msgs::CreateTarget::Request]
+            * \param response   Service-Response [target_msgs::CreateTarget::Response]
+            * \return Function result: Successful/Unsuccessful (true/false)
+            */
+            bool createTargetObjectCB(
+                target_msgs::CreateTarget::Request& req,
+                target_msgs::CreateTarget::Response& res);
+
+            
+            // Service Callback: Update Target object
+            // -------------------------------
+            /** \brief Update target object callback function.
+            *
+            * Service callback function for updating a custom target object.
+            * Function requires information on name of the target-name to update.
+            * The following parameters can be updated: reference frame and pose of the user-frame.
+            *
+            * \param request    Service-Request [target_msgs::UpdateTarget::Request]
+            * \param response   Service-Response [target_msgs::UpdateTarget::Response]
+            * \return Function result: Successful/Unsuccessful (true/false)
+            */
+            bool updateTargetObjectCB(
+                target_msgs::CreateTarget::Request& req,
+                target_msgs::CreateTarget::Response& res);
     }; // End Class: TargetManager
 } // End Namespace: Target
 #endif // TARGET_MANAGER_H 
