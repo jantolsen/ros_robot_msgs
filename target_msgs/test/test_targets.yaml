@@ -134,7 +134,7 @@ targets_test:
     ext_axis:
       installed:  false
       type:       ROTATION
-    joint: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
+    position: [180.0, 90.0, -45.0, 0.0, 0.0, 0.0]
 
   # ----- Test Target 3 ----- #
   test3:
@@ -144,7 +144,7 @@ targets_test:
     ext_axis:
       installed:  false
       type:       ROTATION
-    joint:
+    position:
       q1:   20.5
       q2:   66.77
       q3:   5.6
@@ -160,7 +160,7 @@ targets_test:
     ext_axis:
       installed:  true
       type:       ROTATION
-    joint: [-180.0, 22.5, 45.0, 90.0, 180.0, -22.5, -45.0]
+    position: [-180.0, 22.5, 45.0, 90.0, 180.0, -22.5, -45.0]
     
 
   # ----- Test Target 5 ----- #
@@ -170,7 +170,7 @@ targets_test:
     ext_axis:
       installed:  true
       type:       LINEAR
-    joint:
+    position:
       q0:   -180.0
       q1:   20.5
       q2:   66.77

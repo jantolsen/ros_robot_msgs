@@ -34,6 +34,10 @@
     // Robotics Toolbox
     #include "robot_toolbox/toolbox.h"
 
+    // Target
+    #include "target_msgs/target_joint_context.h"
+    #include "target_msgs/target_cartesian_context.h"
+
     // Target Messages
     #include "target_msgs/TargetJoint.h"
     #include "target_msgs/TargetCartesian.h"
@@ -54,13 +58,13 @@ namespace Target
         CARTESIAN
     };
 
-    // External Axis Type 
-    // (Matches the types defined in TargetExtAxis.msg)
-    enum ExtAxisType
-    {
-        ROTATION,
-        LINEAR
-    };
+    // // External Axis Type 
+    // // (Matches the types defined in TargetExtAxis.msg)
+    // enum ExtAxisType
+    // {
+    //     ROTATION,
+    //     LINEAR
+    // };
 
     // Target Context Class
     // -------------------------------
@@ -207,88 +211,6 @@ namespace Target
                 const XmlRpc::XmlRpcValue& param_xml);
 
 
-            // Load Target-Joint Parameter Data
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Reads and loads information on target-joint from the parameter server.
-            *
-            * Organize and structure the loaded parameters into target-joint message-type.
-            * If successful, the gathered target-joint data is returned.
-            * If parameter loading fails, an error message is given and a runtime expection is thrown..
-            *
-            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target data [target_msgs::TargetJoint] / Unsuccessful: false [bool]
-            */
-            target_msgs::TargetJoint loadParamTargetJoint(
-                const XmlRpc::XmlRpcValue& param_xml);
-
-            
-            // Load Target-Joint Parameter Data 
-            // (with External Axis)
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Reads and loads information on target-joint (with external-axis) from the parameter server.
-            *
-            * Organize and structure the loaded parameters into target-joint message-type.
-            * If successful, the gathered target-joint data is returned.
-            * If parameter loading fails, an error message is given and a runtime expection is thrown..
-            *
-            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target data [target_msgs::TargetJoint] / Unsuccessful: false [bool]
-            */
-            target_msgs::TargetJoint loadParamTargetJoint(
-                const XmlRpc::XmlRpcValue& param_xml,
-                const target_msgs::TargetExtAxis& ext_axis_data);
-
-
-            // Load Target-Joint Parameter Data
-            // -------------------------------
-            /** \brief Reads and loads information on target-cartesian from the parameter server.
-            *
-            * Organize and structure the loaded parameters into target-cartesian message-type.
-            * If successful, the gathered target-cartesian data is returned. 
-            * If parameter loading fails, an error message is given and a runtime expection is thrown..
-            *
-            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target data [target_msgs::TargetCartesian] / Unsuccessful: false [bool]
-            */
-            target_msgs::TargetCartesian loadParamTargetCartesian(
-                const XmlRpc::XmlRpcValue& param_xml);
-
-            
-            // Load External Axis Parameter Data
-            // -------------------------------
-            /** \brief Reads and loads information on External-Axis from the parameter server.
-            *
-            * Organize and structure the loaded parameters into external-axis message-type.
-            * If successful, the gathered external-axis data is returned. 
-            * If parameter loading fails, an error message is given and a runtime expection is thrown..
-            *
-            * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
-            * \return Function return: Successful: target data [target_msgs::TargetExtAxis] / Unsuccessful: false [bool]
-            */
-            target_msgs::TargetExtAxis loadParamExtAxis(
-                const XmlRpc::XmlRpcValue& param_xml);
-
-
-            // Print Target Joint Data
-            // -------------------------------
-            /** \brief Print information on target joint data to terminal.
-            *
-            * Implemented for debugging purposes.
-            */
-            void printTargetJointData();
-
-
-            // Print Target Cartesian Data
-            // -------------------------------
-            /** \brief Print information on target cartesian data to terminal.
-            *
-            * Implemented for debugging purposes.
-            */
-            void printTargetCartesianData();
-
-
         // Private Class members
         // -------------------------------
         // Accessible only for the class which defines them
@@ -298,13 +220,9 @@ namespace Target
 
             // Class Local Member(s)
             // -------------------------------
-            target_msgs::TargetJoint target_joint_data_;
-            target_msgs::TargetCartesian target_cartesian_data_;
             target_msgs::TargetData target_data_;
             std::map<std::string, TargetType> target_type_map_;
             std::vector<std::string> target_type_names_vec_;
-            std::map<std::string, ExtAxisType> ext_axis_type_map_;
-            std::vector<std::string> ext_axis_type_names_vec_;
 
             // ROS Nodehandle(s)
             // -------------------------------
@@ -340,33 +258,6 @@ namespace Target
             */
             static std::vector<std::string> initTargetTypeNames(
                 std::map<std::string, TargetType> target_type_map);
-
-
-            // Initialize External Axis Type Map
-            // -------------------------------
-            /** \brief Initialize external axis type map
-            *
-            * Each axis-type [ExtAxisType] is paired with a name [std::string],
-            * where the entries of external-axis-types matches the defined types in TargetExtAxis.msg
-            * Function populates and returns the external-axis-type map [std::map<std::string, ExtAxisType>]
-            *
-            * \return Target-Type Map [std::map<std::string, ExtAxisType>]
-            */
-            static std::map<std::string, ExtAxisType> initExtAxisTypeMap();
-
-
-            // Initialize External Axis Type Names
-            // -------------------------------
-            /** \brief Initialize External Axis type names
-            *
-            * Each target-type [ExtAxisType] is paired with a name [std::string] in a map.
-            * Function iterates over the given external-axis-type map and stores the external-axis-type names in a vector.
-            *
-            * \param ext_axis_type_map External-Axis-type Map [std::map<std::string, ExtAxisType>]
-            * \return External Axis-Type Names [std::vector<std::string>]
-            */
-            static std::vector<std::string> initExtAxisTypeNames(
-                std::map<std::string, ExtAxisType> ext_axis_type_map);
 
     }; // End Class: TargetContext
 } // End Namespace: Target
