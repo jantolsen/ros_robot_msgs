@@ -8,8 +8,8 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Target name
-string name
+# Target header
+target_data/TargetHeader header
 
 # Reference frame 
 # Frame for which target pose is given relative to

@@ -38,5 +38,33 @@ namespace Target
     // Target Interface Class
     // -------------------------------
 
+    // Class Desctructor
+    // -------------------------------
+    TargetInterface::~TargetInterface()
+    {
+        // Report to terminal
+        ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
+            << ": Destructor called");
+
+    } // Class Desctructor End: ~TargetContext()
+    
+
+    // Get Target Data
+    // -------------------------------
+    target_msgs::TargetData TargetInterface::getTargetData()
+    {
+        // Return local target data
+        return target_data_;
+    }  // Function End: getTargetData()
+
+
+    // Update Target Data
+    // -------------------------------
+    void TargetInterface::updateTargetData(
+        target_msgs::TargetData target_data)
+    {
+        // Update local target data
+        target_data_ = target_data;
+    }  // Function End: updateTargetData()
 
 } // End Namespace: Target

@@ -13,14 +13,8 @@ int32 JOINT         = 0
 int32 CARTESIAN     = 1
 int32 JOINT_EXTAXIS = 2
 
-# Target name
-string name
-
-# Target type
-# Identifier for determining target-type 
-# [JOINT [0], CARTESIAN [1], JOINT_EXTAXIS [2]]
-int32 type
-string type_name
+# Target header
+target_data/TargetHeader header
 
 # Target Joint
 target_data/TargetJoint joint
@@ -30,6 +24,3 @@ target_data/TargetCartesian cartesian
 
 # Target Joint Ext-Axis
 target_data/TargetJointExtAxis joint_ext_axis
-
-# Visualize Target
-bool visible

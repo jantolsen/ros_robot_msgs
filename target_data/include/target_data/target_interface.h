@@ -86,16 +86,6 @@ namespace Target
             virtual ~TargetInterface() = default;
 
 
-            // Publish Target Data
-            // -------------------------------
-            /** \brief Publish target data. 
-            *
-            * Publishes target data as a topic.
-            * The target is published as a [target_data::TargetData] message-type.
-            */
-            virtual void publishTargetData();
-
-
             // Get Target Data
             // -------------------------------
             /** \brief Get information on custom target data.
@@ -110,7 +100,7 @@ namespace Target
 
             // Update Target Data
             // -------------------------------
-            /** \brief Update custom target information.
+            /** \brief Update custom target data information.
             *
             * Target data contains parameters and configuration for custom defined target.
             * Data is initially loaded with parameter data from parameter-server
@@ -127,7 +117,7 @@ namespace Target
             *
             * Implemented for debugging purposes.
             */
-            virtual void printTargetData();
+            virtual void printTargetData() = 0;
 
 
         // Protected Class members
