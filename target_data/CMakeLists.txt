@@ -54,6 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   DIRECTORY msg
   FILES
+  TargetHeader.msg
   TargetData.msg
   TargetJoint.msg
   TargetCartesian.msg
@@ -143,12 +144,13 @@ include_directories(
 
 # Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/target_interface.cpp
-  src/target_joint.cpp
-  src/target_cartesian.cpp
-  src/target_joint_extaxis.cpp
-  src/target_context.cpp
+  src/target_base.cpp
   src/target_manager.cpp
+  # src/target_interface.cpp
+  # src/target_joint.cpp
+  # src/target_cartesian.cpp
+  # src/target_joint_extaxis.cpp
+  # src/target_context.cpp
 )
 
 # Specify libraries to link a library or executable target against

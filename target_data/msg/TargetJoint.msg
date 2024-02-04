@@ -9,18 +9,15 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Target header
-target_data/TargetHeader header
-
 # Number of Joints
 int32 num_joints
 
-# Joint-Posiiton (deg)
-# User-friendly representation of joint-poisiton, typically used for configuration
-# [q1, q2, q3, q4, q5, q6]
-robot_toolbox/JointPosition joint
+# Target Joint Configuration
+# User-friendly representation of joint-data
+# (q1, q2, q3, q4, q5, q6) [deg or m]
+robot_toolbox/JointData joint_config
 
-# Joint-Posiiton (rad)
-# Data type used by system, typically the calculated from "joint" data
-# [q1, q2, q3, q4, q5, q6]
-float64[] position
+# Target Joint
+# Typically calculated from "joint_config" data
+# (q1, q2, q3, q4, q5, q6) [rad or m]
+sensor_msgs/JointState joint

@@ -1,16 +1,23 @@
 // Target Manager
 // -------------------------------
 // Description:
-//      Robot system target manager
-//      Collects, sorts and structures information on custom defined targets 
-//      obtained from the parameter server. The manager utilizes the 
-//      Target-Context class to store information as a target-message type 
-//      for each defined target. Provides functionality for accessing, and publishing 
-//      information on each target present in the system.
+//      Robot system target manager.
+//      Collects, sorts and structures information on custom defined targets,
+//      where parameter and configuration data is gathered from parameter server. 
+//      The manager utilizes the target-base class to create target-objects based
+//      on the configured target-type. The manager provides functionality for accessing 
+//      and publishing information for the target-objects.
+// 
+//      The target manager is implemented as a part of the strategy-pattern implementation 
+//      of the robot-target. The target-base defines the common behaviour and methods
+//      for all strategies (target-types). The related strategies must then implement this interface
+//      to provide their unique implementation of the behaviour and methods. 
+//      The manager is reponsible for creating of the targets using the related strategy.
 //
 // Version:
 //  0.2 -   Overhaul of Target implementation.
-//          Introduding strategy-pattern, utilizing interface, strategies and context
+//          Introduding strategy-pattern.
+//          Utilizing interface and target-types (strategies) into seperate classes.
 //          [20.01.2024]  -   Jan T. Olsen
 //  0.2 -   Overhaul of Target implementation.
 //          Split target-type into seperate classes.
@@ -48,12 +55,8 @@ namespace Target
             param_name_(param_name)
         {
             // Initialize Service-Server(s)
-            // auto tmp_createTargetObject_server_ = nh_.advertiseService("/target/create", &TargetManager::createTargetObjectCB, this);
-            // auto tmp_updateTargetObject_server_ = nh_.advertiseService("/target/update", &TargetManager::updateTargetObjectCB, this);
-            // createTargetObject_server_ = std::make_shared<ros::ServiceServer>(tmp_createTargetObject_server_);
-            // updateUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_updateTargetObject_server_);
 
-            // Initialize user-frame manager
+            // Initialize Target-Manager
             init();
         } // Class Constructor End: TargetManager()
 
@@ -77,37 +80,45 @@ namespace Target
             ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
                 << ": Initializing ... ");
 
-            // // Target Parameter(s)
-            // // -------------------------------
-            //     // Initialize target parameter vector
-            //     param_vec_.clear();
-
-            //     // Load user-frames parameter data
-            //     if(!loadParamData(param_name_))
-            //     {
-            //         // Report to terminal
-            //         ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-            //             << ": Initialization failed!");
-
-            //         // Function return
-            //         return;
-            //     }
-
-            // // Target Object(s)
-            // // -------------------------------
-            //     // Iterate over target parameter vector and create target object for each entry
-            //     for(std::size_t i = 0; i < param_vec_.size(); i++)
-            //     {
-            //         // Create user-frame object
-            //         auto targetObject = createUserFrameObject(param_vec_[i]);
-
-            //         // Debug
-            //         userFrameObject->printUserFrameData();
-            //     }
-
+            
             // Report to terminal
             ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__ 
                 << ": Initializing finished");
         } // Function End: init()
+
+
+        // // Create Target Object
+        // // -------------------------------
+        // // (Function Overloading)
+        // std::shared_ptr<TargetBase> createTargetObject(
+        //     const target_data::TargetData target_data)
+        // {
+            
+        // } // Function End: createTargetObject()
+
+
+        // Create Target Object
+        // -------------------------------
+        // (Function Overloading)
+        std::shared_ptr<TargetBase> TargetManager::createTargetObject(
+            const XmlRpc::XmlRpcValue target_param_xml)
+        {
+            target_data::TargetData targetData;
+
+            auto result_target = targetObject_->loadParamData(target_param_xml);;
+            if (!result_target)
+            {
+                targetData = result_target.value();
+            }
+
+
+            if(targetData.header.type == TargetType::JOINT)
+            {
+                targetObject_ = std::make_shared<TargetBase>(nh_, targetData);
+            }
+
+            // Function return
+            return targetObject_;
+        } // Function End: createTargetObject()
 
 } // End Namespace: Target

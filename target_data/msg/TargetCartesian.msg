@@ -8,19 +8,16 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Target header
-target_data/TargetHeader header
-
 # Reference frame 
 # Frame for which target pose is given relative to
 string ref_frame                              
                                                
-# Cartesian Pose-RPY
-# User-friendly representation of pose, typically used for configuration
-robot_toolbox/PoseRPY pose_rpy  
-                                
-# Cartesian pose
-# Data type used by system, typically the calculated from "pose_rpy" data         
-geometry_msgs/Pose pose           
+# Target Cartesian Pose-RPY Configuration
+# User-friendly representation of pose
+robot_toolbox/PoseRPY pose_config  
+
+# Target Cartesian Pose
+# Typically calculated from "pose_configuration" data
+geometry_msgs/Pose pose 
                                 
                             

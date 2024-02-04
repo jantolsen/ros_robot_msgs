@@ -23,4 +23,4 @@ target_data/TargetJoint joint
 target_data/TargetCartesian cartesian
 
 # Target Joint Ext-Axis
-target_data/TargetJointExtAxis joint_ext_axis
+target_data/TargetJointExtAxis joint_extaxis

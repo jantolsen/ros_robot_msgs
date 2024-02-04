@@ -1,23 +1,16 @@
 // Target Manager
 // -------------------------------
 // Description:
-//      Robot system target manager.
-//      Collects, sorts and structures information on custom defined targets,
-//      where parameter and configuration data is gathered from parameter server. 
-//      The manager utilizes the target-base class to create target-objects based
-//      on the configured target-type. The manager provides functionality for accessing 
-//      and publishing information for the target-objects.
-// 
-//      The target manager is implemented as a part of the strategy-pattern implementation 
-//      of the robot-target. The target-base defines the common behaviour and methods
-//      for all strategies (target-types). The related strategies must then implement this interface
-//      to provide their unique implementation of the behaviour and methods. 
-//      The manager is reponsible for creating of the targets using the related strategy.
+//      Robot system target manager
+//      Collects, sorts and structures information on custom defined targets 
+//      obtained from the parameter server. The manager utilizes the 
+//      Target-Context class to store information as a target-message type 
+//      for each defined target. Provides functionality for accessing, and publishing 
+//      information on each target present in the system.
 //
 // Version:
 //  0.2 -   Overhaul of Target implementation.
-//          Introduding strategy-pattern.
-//          Utilizing interface and target-types (strategies) into seperate classes.
+//          Introduding strategy-pattern, utilizing interface, strategies and context
 //          [20.01.2024]  -   Jan T. Olsen
 //  0.2 -   Overhaul of Target implementation.
 //          Split target-type into seperate classes.
@@ -39,7 +32,6 @@
     #include <string>
     #include <vector>
     #include <map>
-    #include <memory>
 
     // Ros
     #include <ros/ros.h>
@@ -50,19 +42,18 @@
     // Robotics Toolbox
     #include "robot_toolbox/toolbox.h"
 
-    // Target-Data
-    #include "target_data/target_base.h"
-    // #include "target_data/target_joint.h"
-    // #include "target_data/target_cartesian.h"
-    // #include "target_data/target_joint_extaxis.h"
-
     // Target Messages
-    #include "target_data/TargetHeader.h"
     #include "target_data/TargetData.h"
     #include "target_data/TargetJoint.h"
     #include "target_data/TargetCartesian.h"
-    #include "target_data/TargetJointExtAxis.h"
+    #include "target_data/TargetJoint.h"
 
+    // Target Services
+    // #include "target_data/CreateTarget.h"
+    // #include "target_data/UpdateTarget.h"
+
+    // Target Context
+    #include "target_data/target_context.h"
 
 // Namespace: Target
 // -------------------------------
@@ -70,19 +61,13 @@ namespace Target
 {
     // Target Manager Class
     // -------------------------------
-    /** \brief Robot system target manager
+    /** \brief Robot system target handler
     *
-    * Collects, sorts and structures information on custom defined targets,
-    * where parameter and configuration data is gathered from parameter server. 
-    * The manager utilizes the target-base class to create target-objects based
-    * on the configured target-type. The manager provides functionality for accessing 
-    * and publishing information for the target-objects.
-    * 
-    * The target manager is implemented as a part of the strategy-pattern implementation 
-    * of the robot-target. The target-base defines the common behaviour and methods
-    * for all strategies (target-types). The related strategies must then implement this interface
-    * to provide their unique implementation of the behaviour and methods. 
-    * The manager is reponsible for creating of the targets using the related strategy.
+    * Collects, sorts and structures information on custom defined targets 
+    * obtained from the parameter server. The manager utilizes the 
+    * Target-Context class to store information as a target-message type 
+    * for each defined target. Provides functionality for accessing, and publishing 
+    * information on each target present in the system.
     */
     class TargetManager
     {
@@ -110,45 +95,6 @@ namespace Target
             ~TargetManager();
 
 
-            // Get This
-            // -------------------------------
-            /** \brief Get Target-Manager object pointer
-            *
-            * \return Pointer to Target-Base object [TargetBase*]
-            */
-            TargetManager* getThis();
-
-
-            // Create Target Object
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Create a Target object
-            *
-            * Creates a target object [TargetBase] from given parameter data.
-            * Returns the created object as a shared-pointer
-            *
-            * \param target_data    Target data (collection of parameter data) [target_data::TargetData]
-            * \return Shared-Pointer of a Target object [std::shared_ptr<TargetBase>]
-            */
-            std::shared_ptr<TargetBase> createTargetObject(
-                const target_data::TargetData target_data);
-
-
-            // Create Target Object
-            // -------------------------------
-            // (Function Overloading)
-            /** \brief Create a User-Frame object
-            *
-            * Creates a target object [TargetBase] from given parameter data.
-            * Returns the created object as a shared-pointer
-            *
-            * \param target_param_xml   Target parameter data [XmlRpc::XmlRpcValue]
-            * \return Shared-Pointer of a Target object [std::shared_ptr<TargetBase>]
-            */
-            std::shared_ptr<TargetBase> createTargetObject(
-                const XmlRpc::XmlRpcValue target_param_xml);
-
-
         // Protected Class members
         // -------------------------------
         // Accessible within the class which defines them, 
@@ -161,7 +107,6 @@ namespace Target
             */
             void init();
 
-
         // Private Class members
         // -------------------------------
         // Accessible only for the class which defines them
@@ -173,19 +118,19 @@ namespace Target
             // -------------------------------
             XmlRpc::XmlRpcValue param_name_;
             std::vector<XmlRpc::XmlRpcValue> param_vec_;
-            std::shared_ptr<TargetBase> targetObject_;
-            std::map<std::string, std::shared_ptr<TargetBase>> target_map_;
-            std::vector<std::shared_ptr<TargetBase>> target_vec_;
+            std::map<std::string, std::shared_ptr<TargetContext>> target_map_;
+            std::vector<std::shared_ptr<TargetContext>> target_vec_;
+
 
             // ROS Nodehandle(s)
             // -------------------------------
             ros::NodeHandle nh_;
 
-            // // ROS Service Server(s)
-            // // -------------------------------
-            // // (Declaring Service-Servers as shared-pointers to allow shared ownership of the objects)
-            // std::shared_ptr<ros::ServiceServer> createTargetObject_server_;  // ROS Server for creating a Target object
-            // std::shared_ptr<ros::ServiceServer> updateTargetObject_server_;  // ROS Server for updating Target object
+            // ROS Service Server(s)
+            // -------------------------------
+            // (Declaring Service-Servers as shared-pointers to allow shared ownership of the objects)
+            std::shared_ptr<ros::ServiceServer> createTargetObject_server_;  // ROS Server for creating a Target object
+            std::shared_ptr<ros::ServiceServer> updateTargetObject_server_;  // ROS Server for updating Target object
 
             // // Service Callback: Create Target object
             // // -------------------------------

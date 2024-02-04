@@ -1,0 +1,48 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/jan/ros_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_core/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_moveit/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_opw_model/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_planner/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_tests/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_trajectory/include/**",
+        "/home/jan/ros_ws/src/descartes/descartes_utilities/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/frame_msgs/include/**",
+        "/home/jan/ros_ws/src/industrial_core/industrial_robot_client/include/**",
+        "/home/jan/ros_ws/src/industrial_core/industrial_trajectory_filters/include/**",
+        "/home/jan/ros_ws/src/industrial_core/industrial_utils/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/info_msgs/include/**",
+        "/home/jan/ros_ws/src/motoman/motoman_driver/include/**",
+        "/home/jan/ros_ws/src/moveit_opw_kinematics_plugin/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/object_msgs/include/**",
+        "/home/jan/ros_ws/src/opw_kinematics/include/**",
+        "/home/jan/ros_ws/src/robot_control/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/robot_data_msgs/include/**",
+        "/home/jan/ros_ws/src/robot_support/include/**",
+        "/home/jan/ros_ws/src/robot_toolbox/include/**",
+        "/home/jan/ros_ws/src/robotics/robotics_joystick/include/**",
+        "/home/jan/ros_ws/src/robotics/robotics_planner/include/**",
+        "/home/jan/ros_ws/src/robotics/robotics_support/include/**",
+        "/home/jan/ros_ws/src/robotics/robotics_toolbox/include/**",
+        "/home/jan/ros_ws/src/industrial_core/simple_message/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/target_data/include/**",
+        "/home/jan/ros_ws/src/robot_msgs/target_msgs/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

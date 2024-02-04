@@ -11,21 +11,20 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Target header
-target_data/TargetHeader header
-
 # Number of Joints
 int32 num_joints
 
-# Joint-Posiiton
-# User-friendly representation of joint-poisiton, typically used for configuration
-# [qE, q1, q2, q3, q4, q5, q6] ([qE] acting as external axis) 
-robot_toolbox/JointPositionExtAxis joint
+# Target Joint Configuration
+# User-friendly representation of joint-data
+# (qE, q1, q2, q3, q4, q5, q6) [deg or m]
+# ([qE] acting as external axis) 
+robot_toolbox/JointDataExtAxis joint_config
 
-# Joint-Posiiton
+# Target Joint
 # Data type used by system, typically the calculated from "joint" data
-# [qE, q1, q2, q3, q4, q5, q6]
-float64[] position
+# [qE, q1, q2, q3, q4, q5, q6] [rad or m]
+# ([qE] acting as external axis) 
+sensor_msgs/JointState joint
 
 # External axis configuration
 # (e.g. robot track, eoat-spindle)
