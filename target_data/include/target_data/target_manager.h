@@ -162,6 +162,14 @@ namespace Target
             void init();
 
 
+            // Determine Target-Type
+            // -------------------------------
+            /** \brief Determine Target-Type of given target parameter
+            */
+            TargetType determineTargetType(
+                const XmlRpc::XmlRpcValue target_param_xml);
+
+
         // Private Class members
         // -------------------------------
         // Accessible only for the class which defines them

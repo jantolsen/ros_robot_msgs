@@ -111,12 +111,28 @@ namespace Target
                 targetData = result_target.value();
             }
 
+            // Determine Target-Type
+            
 
-            if(targetData.header.type == TargetType::JOINT)
+            // Determine target-type an create appropriate strategy
+            switch (targetData.header.type)
             {
-                targetObject_ = std::make_shared<TargetBase>(nh_, targetData);
-            }
+                case TargetType::JOINT:
+                    targetObject_ = std::make_shared<TargetJoint>(nh_, targetData);
+                    break;
 
+                case TargetType::CARTESIAN:
+                    targetObject_ = std::make_shared<TargetCartesian>(nh_, targetData);
+                    break;
+
+                case TargetType::JOINT_EXTAXIS:
+                    targetObject_ = std::make_shared<TargetJointExtAxis>(nh_, targetData);
+                    break;
+
+                default:
+                    break;
+            }
+            
             // Function return
             return targetObject_;
         } // Function End: createTargetObject()
