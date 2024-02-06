@@ -8,11 +8,6 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
-# Type constants
-int32 JOINT         = 0
-int32 CARTESIAN     = 1
-int32 JOINT_EXTAXIS = 2
-
 # Target header
 target_data/TargetHeader header
 

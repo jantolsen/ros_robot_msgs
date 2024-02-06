@@ -51,7 +51,12 @@ namespace Target
         nh_(nh),
         target_data_(target_data)
     {
+        // Initialize publisher(s)
+        target_pub_ = nh_.advertise<target_data::TargetData>("/target/" + target_data_.header.name, 1);
 
+        // Initialize target-context
+        target_type_map_ = initTargetTypeMap();
+        target_type_names_vec_ = initTargetTypeNames(target_type_map_);
     } // Class Constructor End: TargetBase()
 
 
@@ -62,25 +67,25 @@ namespace Target
         ros::NodeHandle& nh,
         const std::string& param_name)
     :
-        TargetBase(nh, loadParamData(param_name).value())
+        TargetBase(nh, getParamTargetData(param_name))
     {
         // This constructor delegates the construction of the TargetBase-class to:
-        // TargetBase(ros::NodeHandler& nh, const target_data::TargetData& target_header)
+        // TargetBase(ros::NodeHandler& nh, const target_data::TargetData& target_data)
     } // Class Constructor End: TargetBase()
 
     
-    // // Class constructor
-    // // -------------------------------
-    // // (Constructor Overloading)
-    // TargetBase::TargetBase(
-    //     ros::NodeHandle& nh,
-    //     const XmlRpc::XmlRpcValue& param_xml)
-    // :
-    //     TargetBase(nh, loadParamTargetData(param_name).value())
-    // {
-    //     // This constructor delegates the construction of the TargetBase-class to:
-    //     // TargetBase(ros::NodeHandler& nh, const target_data::TargetData& target_header)
-    // } // Class Constructor End: TargetBase()
+    // Class constructor
+    // -------------------------------
+    // (Constructor Overloading)
+    TargetBase::TargetBase(
+        ros::NodeHandle& nh,
+        const XmlRpc::XmlRpcValue& param_xml)
+    :
+        TargetBase(nh, getParamTargetData(param_xml))
+    {
+        // This constructor delegates the construction of the TargetBase-class to:
+        // TargetBase(ros::NodeHandler& nh, const target_data::TargetData& target_data)
+    } // Class Constructor End: TargetBase()
 
 
     // Class Desctructor
@@ -111,6 +116,42 @@ namespace Target
     } // Function End: getTargetData()
 
 
+    // Get Target Header Data
+    // -------------------------------
+    target_data::TargetHeader TargetBase::getTargetHeader()
+    {
+        // Return local target-header data
+        return target_data_.header;
+    } // Function End: getTargetHeader()
+
+
+    // Get Target Joint Data
+    // -------------------------------
+    target_data::TargetJoint TargetBase::getTargetJoint()
+    {
+        // Return local target-joint data
+        return target_data_.joint;
+    } // Function End: getTargetJoint()
+
+
+    // Get Target Cartesian Data
+    // -------------------------------
+    target_data::TargetCartesian TargetBase::getTargetCartesian()
+    {
+        // Return local target-cartesian data
+        return target_data_.cartesian;
+    } // Function End: getTargetCartesian()
+
+
+    // Get Target Joint External-Axis Data
+    // -------------------------------
+    target_data::TargetJointExtAxis TargetBase::getTargetJointExtAxis()
+    {
+        // Return local target-joint-ext-axis data
+        return target_data_.joint_extaxis;
+    } // Function End: getTargetJointExtAxis()
+
+
     // Get Target-Type Map
     // -------------------------------
     std::map<std::string, TargetType> TargetBase::getTargetTypeMap()
@@ -139,34 +180,35 @@ namespace Target
     } // Function End: updateTargetData()
 
 
-    // Load Target Parameter Data
+    // Get Target Parameter Data
     // -------------------------------
     // (Function Overloading)
-    boost::optional<target_data::TargetData> TargetBase::loadParamData(
+    target_data::TargetData TargetBase::getParamTargetData(
         const std::string& param_name)
     {
         // Define local variable(s)
         XmlRpc::XmlRpcValue param_xml;
         
-        // Check parameter server for Target parameters
+        // Check parameter server for target parameter
         if(!ros::param::get(param_name, param_xml))
         {
             // Failed to get parameter
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                <<  ": Failed! Target Parameter [" << param_name << "] is NOT found");
+            std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                + ": Failed! Target Parameter [" + param_name + "] is NOT found";
 
-            // Function return
-            return boost::none;
+            // Report to terminal and throw run-time exception
+            ROS_ERROR_STREAM(error_msg);
+            throw std::runtime_error(error_msg);
         }
         // Function return
-        return loadParamData(param_xml);
-    } // Function End: loadParamData()
+        return getParamTargetData(param_xml);
+    } // Function End: getParamTargetData()
 
 
-    // Load Target Parameter Data
+    // Get Target Parameter Data
     // -------------------------------
     // (Function Overloading)
-    boost::optional<target_data::TargetData> TargetBase::loadParamData(
+    target_data::TargetData TargetBase::getParamTargetData(
         const XmlRpc::XmlRpcValue& param_xml)
     {
         // Reads and loads parameter data obtained from the parameter-server
@@ -181,41 +223,43 @@ namespace Target
         if(!Toolbox::Parameter::checkDataType(param_xml, XmlRpc::XmlRpcValue::TypeStruct))
         {
             // Parameter is not a struct
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Given Target parameter is NOT a struct");
+            std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                + ": Failed! Given Target parameter is NOT a struct";
 
-            // Function return
-            return boost::none;
+            // Report to terminal and throw run-time exception
+            ROS_ERROR_STREAM(error_msg);
+            throw std::runtime_error(error_msg);
         }
 
-        // Load, validate and assign parameter data
+        // Try to load parameter data
         try
         {
-            // Get and load Target-Header parameter data
+            // Read and validate parameter data
             target_data.header = getParamTargetHeader(param_xml);
         }
         // Catch Exception(s)
         catch (const std::exception& e) 
         {
-            // Parameter loading failed
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
-                << ": Failed! Parameter(s) related to Target [" << target_data.header.name << "]" 
-                << " is either missing or configured incorrectly");
+            // Failed to get parameter
+            std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                + ": Failed! Parameter(s) related to Target [" + target_data.header.name + "]" 
+                + " is either missing or configured incorrectly";
 
             // Exception details
             std::cerr << e.what() << std::endl;
 
-            // Function return
-            return boost::none;
+            // Report to terminal and throw run-time exception
+            ROS_ERROR_STREAM(error_msg);
+            throw std::runtime_error(error_msg);
         } 
         // Function return
         return target_data;
-    } // Function End: loadParamData()
+    } // Function End: getParamTargetData()
 
 
-    // Print Target-Header
+    // Print Target-Data
     // -------------------------------
-    void TargetBase::printTargetHeader()
+    void TargetBase::printTargetData()
     {
         // Print information on local target data to terminal
         ROS_INFO_STREAM(" ");
@@ -224,7 +268,70 @@ namespace Target
         ROS_INFO_STREAM("Name: " << target_data_.header.name);
         ROS_INFO_STREAM("Type: " << target_data_.header.type_name); 
         
-    } // Function End: printTargetHeader()
+    } // Function End: printTargetData()
+
+
+    // Get Target-Type Parameter
+    // -------------------------------
+    // (Function Overloading)
+    TargetType TargetBase::getParamTargetType(
+        const std::string& param_name)
+    {
+        // Define local variable(s)
+        XmlRpc::XmlRpcValue param_xml;
+        
+        // Check parameter server for target parameter
+        if(!ros::param::get(param_name, param_xml))
+        {
+            // Failed to get parameter
+            std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                + ": Failed! Target Parameter [" + param_name + "] is NOT found";
+
+            // Report to terminal and throw run-time exception
+            ROS_ERROR_STREAM(error_msg);
+            throw std::runtime_error(error_msg);
+        }
+        // Function return
+        return getParamTargetType(param_xml);
+    } // Function End: getParamTargetType()
+
+
+    // Get Target-Type Parameter
+    // -------------------------------
+    // (Function Overloading)
+    TargetType TargetBase::getParamTargetType(
+        const XmlRpc::XmlRpcValue& param_xml)
+    {
+        // Define local variable(s)
+        std::string target_name;
+        TargetType target_type;
+        std::map<std::string, TargetType> target_type_map = initTargetTypeMap();
+
+        // Try to load parameter data
+        try
+        {
+            // Read and validate parameter data
+            target_name = Toolbox::Parameter::getParamData<std::string>(param_xml, "name");
+            target_type = Toolbox::Parameter::getParamData<TargetType>(param_xml, "type", target_type_map);
+        }
+        // Catch Exception(s)
+        catch(const std::exception& e)
+        {
+            // Failed to get parameter
+            std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                + ": Failed! Parameter(s) related to Target [" + target_name + "]" 
+                + " is either missing or configured incorrectly";
+
+            // Exception details
+            std::cerr << e.what() << std::endl;
+
+            // Report to terminal and throw run-time exception
+            ROS_ERROR_STREAM(error_msg);
+            throw std::runtime_error(error_msg);
+        }
+        // Function return
+        return target_type;
+    } // Function End: getParamTargetType()
 
 
     // Get Target-Header Parameter Data
@@ -237,7 +344,7 @@ namespace Target
         // Parameters are acquired as XmlRpcValue data-type which acts as generic collector.
         // Elements of the loaded parameters are validated and assigned to the respective element in the message-type
         // (data entries of XmlRpcValue needs to be cast to appropriate data-type)
-        
+
         // Define local variable(s)
         target_data::TargetHeader target_header;
         std::map<std::string, TargetType> target_type_map = initTargetTypeMap();
@@ -260,8 +367,9 @@ namespace Target
         // Define and populate map
         std::map<std::string, TargetType> target_type_map =
         {
-            {"JOINT",       TargetType::JOINT},
-            {"CARTESIAN",   TargetType::CARTESIAN}
+            {"JOINT",           TargetType::JOINT},
+            {"CARTESIAN",       TargetType::CARTESIAN},
+            {"JOINT_EXTAXIS",   TargetType::JOINT_EXTAXIS}
         };
         // Function return
         return target_type_map;

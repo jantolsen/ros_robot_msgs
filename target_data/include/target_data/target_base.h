@@ -89,6 +89,8 @@ namespace Target
         // -------------------------------
         // Accessible for everyone
         public:
+            // Define Shared-Pointer of Class-Object
+            typedef typename std::shared_ptr<TargetBase> Ptr;
 
             // Class constructor
             // -------------------------------
@@ -98,7 +100,7 @@ namespace Target
             * \param nh                 ROS Nodehandle [ros::Nodehandle]
             * \param target_data        Target data [target_data::TargetData]
             */
-            explicit TargetBase(
+            TargetBase(
                 ros::NodeHandle& nh,
                 const target_data::TargetData& target_data);
 
@@ -111,7 +113,7 @@ namespace Target
             * \param nh         ROS Nodehandle [ros::Nodehandle]
             * \param param_name Target parameter name, located on parameter server [std::string]
             */
-            explicit TargetBase(
+            TargetBase(
                 ros::NodeHandle& nh,
                 const std::string& param_name);
 
@@ -124,7 +126,7 @@ namespace Target
             * \param nh         ROS Nodehandle [ros::Nodehandle]
             * \param param_xml  Target parameter, located on parameter server [XmlRpc::XmlRpcValue]
             */
-            explicit TargetBase(
+            TargetBase(
                 ros::NodeHandle& nh,
                 const XmlRpc::XmlRpcValue& param_xml);
 
@@ -248,35 +250,37 @@ namespace Target
                 target_data::TargetData target_data);
 
 
-            // Load Target Parameter Data
+            // Get Target Parameter Data
             // -------------------------------
             // (Function Overloading)
             /** \brief Reads and loads information on custom target from the parameter server.
             *
             * Organize and structure the loaded parameters into target message-type.
             * If successful, the gathered target-data is returned. 
-            * If parameter loading fails, an error message is given function returns false.
+            * If parameter loading fails, an error message is given a run-time exception is thrown.
             *
             * \param param_name Target parameter name, located on parameter server [std::string]
-            * \return  Function return: Successful: Target-Data [target_data::TargetData] / Unsuccessful: false [bool]
+            * \return           Target-Data [target_data::TargetData]
+            * \exception        Throws a run-time exception if paramter is not found or invalid target-type.  
             */
-            virtual boost::optional<target_data::TargetData> loadParamData(
+            virtual target_data::TargetData getParamTargetData(
                 const std::string& param_name);
 
 
-            // Load Target Parameter Data
+            // Get Target Parameter Data
             // -------------------------------
             // (Function Overloading)
             /** \brief Reads and loads information on custom target from the parameter server.
             *
             * Organize and structure the loaded parameters into target message-type.
             * If successful, the gathered target-data is returned. 
-            * If parameter loading fails, an error message is given function returns false.
+            * If parameter loading fails, an error message is given a run-time exception is thrown.
             *
             * \param param_xml  Target parameters [XmlRpc::XmlRpcValue]
-            * \return  Function return: Successful: Target-Data [target_data::TargetData] / Unsuccessful: false [bool]
+            * \return           Target-Data [target_data::TargetData]
+            * \exception        Throws a run-time exception if paramter is not found or invalid target-type. 
             */
-            virtual boost::optional<target_data::TargetData> loadParamData(
+            virtual target_data::TargetData getParamTargetData(
                 const XmlRpc::XmlRpcValue& param_xml);
 
 
@@ -287,6 +291,44 @@ namespace Target
             * Implemented for debugging purposes.
             */
             virtual void printTargetData();
+
+            
+            // Get Target-Type Parameter
+            // -------------------------------
+            // (Function Overloading)
+            /** \brief Get target-type related to the custom target from the parameter server.
+            *
+            * If the target-type parameter is found, the obtained value is validated against 
+            * pre-defined valid target-types (target-type-map). 
+            * 
+            * Failing to load the parameter or unsuccessful validation, the function gives
+            * an error message and a run-time exception is thrown.
+            *     
+            * \param param_name Target parameter name, located on parameter server [std::string]
+            * \return           Function return: Target-Type [TargetType]
+            * \exception        Throws a run-time exception if paramter is not found or invalid target-type. 
+            */
+            static TargetType getParamTargetType(
+                const std::string& param_name);
+
+
+            // Get Target-Type Parameter
+            // -------------------------------
+            // (Function Overloading)
+            /** \brief Get target-type related to the custom target from the parameter server.
+            *
+            * If the target-type parameter is found, the obtained value is validated against 
+            * pre-defined valid target-types (target-type-map). 
+            * 
+            * Failing to load the parameter or unsuccessful validation, the function gives
+            * an error message and a run-time exception is thrown.
+            *     
+            * \param param_xml  Target parameter [XmlRpc::XmlRpcValue]
+            * \return           Target-Type data [TargetType]
+            * \exception        Throws a run-time exception if paramter is not found or invalid target-type. 
+            */
+            static TargetType getParamTargetType(
+                const XmlRpc::XmlRpcValue& param_xml);
 
 
         // Protected Class members
@@ -307,6 +349,11 @@ namespace Target
             // -------------------------------
             ros::NodeHandle nh_;
             
+            // ROS Publsiher(s)
+            // -------------------------------
+            ros::Publisher target_pub_;
+
+
             // Get Target-Header Parameter Data
             // -------------------------------
             // (Function Overloading)
@@ -321,15 +368,6 @@ namespace Target
             */
             target_data::TargetHeader getParamTargetHeader(
                 const XmlRpc::XmlRpcValue& param_xml);
-
-
-            // Print Target-Header
-            // -------------------------------
-            /** \brief Print target-header information on target data to terminal.
-            *
-            * Implemented for debugging purposes.
-            */
-            virtual void printTargetHeader();
 
 
         // Private Class members

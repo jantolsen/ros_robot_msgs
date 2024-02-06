@@ -29,17 +29,107 @@
     #include "target_data/TargetJointExtAxis.h"
 
     // Target
-    // #include "target_data/target_context.h"
-    // #include "target_data/target_manager.h"
+    #include "target_data/target_base.h"
+    #include "target_data/target_manager.h"
 
-// Test: Function
+
+// Target Test: 1
 // -------------------------------
-void testFunc()
+void targetTest1(ros::NodeHandle nh)
 {
-    
-    
-} // Function end: testFunc()
+    // Define and initialize Target-Handler
+    std::string param_name = "targets_test/test1";
+    XmlRpc::XmlRpcValue param_xml;
 
+    // TargetBase
+    Target::TargetBase targetObject(nh, param_name);
+
+    // Debug Print
+    targetObject.printTargetData();
+}
+
+
+// Target Test: 2
+// -------------------------------
+void targetTest2(ros::NodeHandle nh)
+{
+    // Define and initialize Target-Handler
+    std::string param_name = "/targets_test/test2";
+    XmlRpc::XmlRpcValue param_xml;
+    
+    // Check parameter server for parameter-data
+    if(!ros::param::get(param_name, param_xml))
+    {
+        // Failed to get parameter
+        ROS_ERROR_STREAM(__FUNCTION__ << "Failed!");
+        return;
+    }
+
+    // TargetBase
+    Target::TargetBase targetObject(nh, param_xml);
+
+    // Debug Print
+    targetObject.printTargetData();
+}
+
+
+// Target Test: X
+// -------------------------------
+void targetTestX(ros::NodeHandle nh)
+{
+    // Define User-Frame Msgs
+    target_data::TargetData targetDataMsg;
+
+    // Assign parameters
+    targetDataMsg.header.name = "testX";
+    targetDataMsg.header.type_name = "JOINT";
+    targetDataMsg.header.type = static_cast<int>(Target::TargetType::CARTESIAN);
+
+    // Assign cartesian data of target
+    targetDataMsg.cartesian.ref_frame = "world";
+    targetDataMsg.cartesian.pose_config.position.x = -1.0;
+    targetDataMsg.cartesian.pose_config.position.y = 5.8;
+    targetDataMsg.cartesian.pose_config.position.z = 2.3;
+    targetDataMsg.cartesian.pose_config.orientation.x = -4.3;
+    targetDataMsg.cartesian.pose_config.orientation.y = 8.0;
+    targetDataMsg.cartesian.pose_config.orientation.z = 3.14;
+    targetDataMsg.cartesian.pose = Toolbox::Convert::poseRPYToPose(targetDataMsg.cartesian.pose_config);
+
+    // Define and initialize Target-Handler
+    Target::TargetBase target_X(nh, targetDataMsg);
+
+    // Debug Print
+    target_X.printTargetData();
+}
+
+// Target Manager
+// -------------------------------
+void targetManager(ros::NodeHandle nh, std::string param_name)
+{   
+    // Local Variables
+    XmlRpc::XmlRpcValue param_xml;
+
+    // Target Manager
+    Target::TargetManager targetManager(nh, param_name);
+
+    // Check parameter server for parameter-data
+    if(!ros::param::get(param_name, param_xml))
+    {
+        // Failed to get parameter
+        ROS_ERROR_STREAM(__FUNCTION__ << "Failed!");
+        return;
+    }
+
+    // Target object
+    auto targetObject = targetManager.createTargetObject(param_xml);
+
+    // Debug Print
+    ROS_WARN_STREAM( __FUNCTION__ 
+        << ": Trying to print Target-Object from Target-manager");
+
+    // Debug Print
+    targetObject->printTargetData();
+}
 
 // Info-Kinemaatics Test Node 
 // -------------------------------
@@ -62,95 +152,25 @@ int main(int argc, char** argv)
         std::string param_name;
         XmlRpc::XmlRpcValue param_xml;
     
-    // // Target #1
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test1";
-    //     Target::TargetContext target_1(nh, param_name);
+    // Target #1
+    // -------------------------------
+        targetTest1(nh);
 
-    //     // Debug Print
-    //     target_1.printTargetData();
+    // Target #2
+    // -------------------------------
+        targetTest2(nh);
 
-    // // Target #2
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test2";
-        
-    //     // Check parameter server for Information-Kinematics parameters
-    //     if(!ros::param::get(param_name, param_xml))
-    //     {
-    //         // Failed to get parameter
-    //         ROS_ERROR_STREAM("Failed! User-Frames Parameter [" << param_name << "] not found");
 
-    //         // Function return
-    //         return false;
-    //     }
-
-    //     Target::TargetContext target_2(nh, param_xml);
-
-    // // Target #3
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test3";
-    //     Target::TargetContext target_3(nh, param_name);
-
-    //     // Debug Print
-    //     target_3.printTargetData();
-
-    // // Target #4
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test4";
-    //     Target::TargetContext target_4(nh, param_name);
-
-    //     // Debug Print
-    //     target_4.printTargetData();
-
-    // // Target #5
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test5";
-    //     Target::TargetContext target_5(nh, param_name);
-
-    //     // Debug Print
-    //     target_5.printTargetData();
-
-    // // Target #6
-    // // -------------------------------
-    //     // Define and initialize Target-Handler
-    //     param_name = "/targets_test/test6";
-    //     Target::TargetContext target_6(nh, param_name);
-
-    //     // Debug Print
-    //     target_6.printTargetData();
+    // Target Manager
+    // -------------------------------
+        targetManager(nh, "/targets_test/test3");
+        targetManager(nh, "/targets_test/test4");
+        targetManager(nh, "/targets_test/test6");
     
 
-    // // Target #X
-    // // -------------------------------
-    //     // Define User-Frame Msgs
-    //     target_msgs::TargetData targetDataMsg;
-
-    //     // Assign parameters
-    //     targetDataMsg.name = "testX";
-    //     targetDataMsg.type_name = "JOINT";
-    //     targetDataMsg.type = static_cast<int>(Target::TargetType::CARTESIAN);
-    //     targetDataMsg.visible = true;
-
-    //     // Assign cartesian data of target
-    //     targetDataMsg.cartesian.ref_frame = "world";
-    //     targetDataMsg.cartesian.pose_rpy.position.x = -1.0;
-    //     targetDataMsg.cartesian.pose_rpy.position.y = 5.8;
-    //     targetDataMsg.cartesian.pose_rpy.position.z = 2.3;
-    //     targetDataMsg.cartesian.pose_rpy.orientation.x = -4.3;
-    //     targetDataMsg.cartesian.pose_rpy.orientation.y = 8.0;
-    //     targetDataMsg.cartesian.pose_rpy.orientation.z = 3.14;
-    //     targetDataMsg.cartesian.pose = Toolbox::Convert::poseRPYToPose(targetDataMsg.cartesian.pose_rpy);
-
-    //     // Define and initialize Target-Handler
-    //     Target::TargetContext target_X(nh, targetDataMsg);
-
-    //     // Debug Print
-    //     target_X.printTargetData();
+    // Target #X
+    // -------------------------------
+        targetTestX(nh);
 
 
     // Main Loop

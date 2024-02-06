@@ -103,36 +103,54 @@ namespace Target
         std::shared_ptr<TargetBase> TargetManager::createTargetObject(
             const XmlRpc::XmlRpcValue target_param_xml)
         {
-            target_data::TargetData targetData;
+            // Get target-type of given target parameter data
+            TargetBase::Ptr targetObjectPtr;
+            // TargetType target_type = targetObject_->getParamTargetType(target_param_xml);
+            TargetType target_type = targetObjectPtr->getParamTargetType(target_param_xml);
 
-            auto result_target = targetObject_->loadParamData(target_param_xml);;
-            if (!result_target)
+            // Evaluate target-type and instantiate appropriate target strategy
+            switch (target_type)
             {
-                targetData = result_target.value();
-            }
-
-            // Determine Target-Type
-            
-
-            // Determine target-type an create appropriate strategy
-            switch (targetData.header.type)
-            {
+                // Target-Type: Joint
                 case TargetType::JOINT:
-                    targetObject_ = std::make_shared<TargetJoint>(nh_, targetData);
+                    // targetObject_ = std::make_shared<TargetJoint>(nh_, targetData);
+
+                    // Debug Print
+                    ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                        << ": Creating a TARGET-JOINT");
                     break;
 
+                // Target-Type: Cartesian
                 case TargetType::CARTESIAN:
-                    targetObject_ = std::make_shared<TargetCartesian>(nh_, targetData);
+                    // targetObject_ = std::make_shared<TargetCartesian>(nh_, targetData);
+
+                    // Debug Print
+                    ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                        << ": Creating a TARGET-CARTESIAN");
                     break;
 
+                // Target-Type: Joint with External-Axis
                 case TargetType::JOINT_EXTAXIS:
-                    targetObject_ = std::make_shared<TargetJointExtAxis>(nh_, targetData);
+                    // targetObject_ = std::make_shared<TargetJointExtAxis>(nh_, targetData);
+
+                    // Debug Print
+                    ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                        << ": Creating a TARGET-JOINT_EXTAXIS");
                     break;
 
+                // Target-Type: Unknown 
+                // (Should not happen!)
                 default:
+                    // Unknown target-type report to terminal
+                    std::string error_msg = CLASS_PREFIX + __FUNCTION__
+                        + ": Failed! Unsupported target-type failed to create target-object!";
+
+                    // Report to terminal and throw run-time exception
+                    ROS_ERROR_STREAM(error_msg);
+                    throw std::runtime_error(error_msg);
                     break;
-            }
-            
+            } // End-Switch: Target-Type Evaluation
+
             // Function return
             return targetObject_;
         } // Function End: createTargetObject()

@@ -248,7 +248,7 @@ namespace Frame
         } 
 
         // Assign Transform data of User-Frame
-        geometry_msgs::Pose pose = Toolbox::Convert::poseRPYToPose(user_frame_data.pose_rpy);
+        geometry_msgs::Pose pose = Toolbox::Convert::poseEulerRPYToPose(user_frame_data.pose_rpy);
         user_frame_data.transform_stamped = Toolbox::Convert::poseToTransform(pose, user_frame_data.ref_frame, user_frame_data.name);
 
         // Function return
