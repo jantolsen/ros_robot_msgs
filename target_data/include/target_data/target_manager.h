@@ -52,9 +52,9 @@
 
     // Target-Data
     #include "target_data/target_base.h"
-    // #include "target_data/target_joint.h"
-    // #include "target_data/target_cartesian.h"
-    // #include "target_data/target_joint_extaxis.h"
+    #include "target_data/target_cartesian.h"
+    #include "target_data/target_joint.h"
+    #include "target_data/target_joint_extaxis.h"
 
     // Target Messages
     #include "target_data/TargetHeader.h"

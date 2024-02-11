@@ -250,6 +250,15 @@ namespace Target
                 target_data::TargetData target_data);
 
 
+            // Print Target Data
+            // -------------------------------
+            /** \brief Print information on target data to terminal.
+            *
+            * Implemented for debugging purposes.
+            */
+            virtual void printTargetData();
+
+
             // Get Target Parameter Data
             // -------------------------------
             // (Function Overloading)
@@ -263,7 +272,8 @@ namespace Target
             * \return           Target-Data [target_data::TargetData]
             * \exception        Throws a run-time exception if paramter is not found or invalid target-type.  
             */
-            virtual target_data::TargetData getParamTargetData(
+            // virtual target_data::TargetData getParamTargetData(
+            target_data::TargetData getParamTargetData(
                 const std::string& param_name);
 
 
@@ -280,17 +290,9 @@ namespace Target
             * \return           Target-Data [target_data::TargetData]
             * \exception        Throws a run-time exception if paramter is not found or invalid target-type. 
             */
-            virtual target_data::TargetData getParamTargetData(
+            // virtual target_data::TargetData getParamTargetData(
+            target_data::TargetData getParamTargetData(
                 const XmlRpc::XmlRpcValue& param_xml);
-
-
-            // Print Target Data
-            // -------------------------------
-            /** \brief Print information on target data to terminal.
-            *
-            * Implemented for debugging purposes.
-            */
-            virtual void printTargetData();
 
             
             // Get Target-Type Parameter
@@ -356,7 +358,6 @@ namespace Target
 
             // Get Target-Header Parameter Data
             // -------------------------------
-            // (Function Overloading)
             /** \brief Reads and loads target-header information on custom target-header from the parameter server.
             *
             * Organize and structure the loaded parameters into target-header message-type.

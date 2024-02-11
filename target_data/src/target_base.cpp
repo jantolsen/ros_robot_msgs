@@ -23,6 +23,8 @@
 //          [09.01.2024]  -   Jan T. Olsen
 //
 // -------------------------------
+
+
 // Include Header-files:
 // -------------------------------
     
@@ -180,6 +182,20 @@ namespace Target
     } // Function End: updateTargetData()
 
 
+    // Print Target-Data
+    // -------------------------------
+    void TargetBase::printTargetData()
+    {
+        // Print information on local target data to terminal
+        ROS_INFO_STREAM(" ");
+        ROS_INFO_STREAM("Target:");
+        ROS_INFO_STREAM("--------------------");
+        ROS_INFO_STREAM("Name: " << target_data_.header.name);
+        ROS_INFO_STREAM("Type: " << target_data_.header.type_name); 
+        
+    } // Function End: printTargetData()
+
+
     // Get Target Parameter Data
     // -------------------------------
     // (Function Overloading)
@@ -189,6 +205,10 @@ namespace Target
         // Define local variable(s)
         XmlRpc::XmlRpcValue param_xml;
         
+        // Report to terminal:
+        ROS_INFO_STREAM(CLASS_PREFIX << __FUNCTION__
+            << ": Loading Target Parameter [" + param_name + "]";);
+
         // Check parameter server for target parameter
         if(!ros::param::get(param_name, param_xml))
         {
@@ -257,20 +277,6 @@ namespace Target
     } // Function End: getParamTargetData()
 
 
-    // Print Target-Data
-    // -------------------------------
-    void TargetBase::printTargetData()
-    {
-        // Print information on local target data to terminal
-        ROS_INFO_STREAM(" ");
-        ROS_INFO_STREAM("Target:");
-        ROS_INFO_STREAM("--------------------");
-        ROS_INFO_STREAM("Name: " << target_data_.header.name);
-        ROS_INFO_STREAM("Type: " << target_data_.header.type_name); 
-        
-    } // Function End: printTargetData()
-
-
     // Get Target-Type Parameter
     // -------------------------------
     // (Function Overloading)
@@ -336,7 +342,6 @@ namespace Target
 
     // Get Target-Header Parameter Data
     // -------------------------------
-    // (Function Overloading)
     target_data::TargetHeader TargetBase::getParamTargetHeader(
         const XmlRpc::XmlRpcValue& param_xml)
     {

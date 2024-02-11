@@ -41,8 +41,8 @@ void targetTest1(ros::NodeHandle nh)
     std::string param_name = "targets_test/test1";
     XmlRpc::XmlRpcValue param_xml;
 
-    // TargetBase
-    Target::TargetBase targetObject(nh, param_name);
+    // TargetCartesian
+    Target::TargetCartesian targetObject(nh, param_name);
 
     // Debug Print
     targetObject.printTargetData();
@@ -65,8 +65,48 @@ void targetTest2(ros::NodeHandle nh)
         return;
     }
 
-    // TargetBase
-    Target::TargetBase targetObject(nh, param_xml);
+    // TargetCartesian
+    Target::TargetCartesian targetObject(nh, param_xml);
+
+    // Debug Print
+    targetObject.printTargetData();
+}
+
+
+// Target Test: 3
+// -------------------------------
+void targetTest3(ros::NodeHandle nh)
+{
+    // Define and initialize Target-Handler
+    std::string param_name = "targets_test/test3";
+    XmlRpc::XmlRpcValue param_xml;
+
+    // TargetJoint
+    Target::TargetJoint targetObject(nh, param_name);
+
+    // Debug Print
+    targetObject.printTargetData();
+}
+
+
+// Target Test: 4
+// -------------------------------
+void targetTest4(ros::NodeHandle nh)
+{
+    // Define and initialize Target-Handler
+    std::string param_name = "/targets_test/test4";
+    XmlRpc::XmlRpcValue param_xml;
+    
+    // Check parameter server for parameter-data
+    if(!ros::param::get(param_name, param_xml))
+    {
+        // Failed to get parameter
+        ROS_ERROR_STREAM(__FUNCTION__ << "Failed!");
+        return;
+    }
+
+    // TargetJoint
+    Target::TargetJoint targetObject(nh, param_name);
 
     // Debug Print
     targetObject.printTargetData();
@@ -163,14 +203,14 @@ int main(int argc, char** argv)
 
     // Target Manager
     // -------------------------------
+        targetManager(nh, "/targets_test/test1");
+        targetManager(nh, "/targets_test/test2");
         targetManager(nh, "/targets_test/test3");
-        targetManager(nh, "/targets_test/test4");
-        targetManager(nh, "/targets_test/test6");
     
 
     // Target #X
     // -------------------------------
-        targetTestX(nh);
+        // targetTestX(nh);
 
 
     // Main Loop

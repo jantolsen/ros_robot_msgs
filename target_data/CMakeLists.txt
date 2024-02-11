@@ -145,12 +145,10 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/target_base.cpp
+  src/target_joint.cpp
+  src/target_cartesian.cpp
+  src/target_joint_extaxis.cpp
   src/target_manager.cpp
-  # src/target_interface.cpp
-  # src/target_joint.cpp
-  # src/target_cartesian.cpp
-  # src/target_joint_extaxis.cpp
-  # src/target_context.cpp
 )
 
 # Specify libraries to link a library or executable target against

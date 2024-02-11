@@ -113,7 +113,7 @@ namespace Target
             {
                 // Target-Type: Joint
                 case TargetType::JOINT:
-                    // targetObject_ = std::make_shared<TargetJoint>(nh_, targetData);
+                    targetObject_ = std::make_shared<TargetJoint>(nh_, target_param_xml);
 
                     // Debug Print
                     ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ 
@@ -122,7 +122,7 @@ namespace Target
 
                 // Target-Type: Cartesian
                 case TargetType::CARTESIAN:
-                    // targetObject_ = std::make_shared<TargetCartesian>(nh_, targetData);
+                    targetObject_ = std::make_shared<TargetCartesian>(nh_, target_param_xml);
 
                     // Debug Print
                     ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ 
