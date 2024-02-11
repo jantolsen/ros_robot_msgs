@@ -9,6 +9,9 @@
 #           [18.12.2023] - Jan T. Olsen
 # -------------------------------
 
+# Target name
+string name
+
 # Number of Joints
 int32 num_joints
 
